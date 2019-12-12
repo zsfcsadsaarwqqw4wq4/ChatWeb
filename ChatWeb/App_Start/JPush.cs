@@ -37,20 +37,26 @@ namespace ChatWeb.App_Start
             //设置受众
             pushPayload.audience = Audience.s_registrationId(registerid);//设置推送目标
             ////通知获取
-            pushPayload.notification = Notification.android("55555", pushTitle);
+            //pushPayload.notification = Notification.android("55555", pushTitle);
             ////通知获取
-            pushPayload.notification = Notification.ios(pushTitle);
-            ///
-            //var notification = new Notification().setAlert(pushTitle);//推送消息内容
-            //notification.AndroidNotification = new AndroidNotification();
-            //notification.IosNotification = new IosNotification();
-            //foreach (var model in pushList)
-            //{                
-            //    notification.AndroidNotification.AddExtra(model.Key,model.Value);//Android推送消息
-            //    notification.IosNotification.AddExtra(model.Key, model.Value);//IOS推送消息
-            //    notification.IosNotification.setSound("happy");
-            //    pushPayload.notification = notification.Check();
-            //}
+            //pushPayload.notification = Notification.ios(pushTitle);
+            var notification = new Notification().setAlert(pushTitle);//推送消息内容
+            notification.AndroidNotification = new AndroidNotification();
+            notification.IosNotification = new IosNotification();
+            if (pushList.Count>0)
+            {
+                foreach (var model in pushList)
+                {
+                    notification.AndroidNotification.AddExtra(model.Key, model.Value);//Android推送消息
+                    notification.IosNotification.AddExtra(model.Key, model.Value);//IOS推送消息
+                    notification.IosNotification.setSound("happy");
+                    pushPayload.notification = notification.Check();
+                }
+            }
+            else
+            {
+                pushPayload.notification = Notification.android("这是标题", pushTitle);
+            }
             return pushPayload;
         }
         public static PushPayload PushObject_Android_Tag_AlertWithTitle(string alert, string title, string shebei)
