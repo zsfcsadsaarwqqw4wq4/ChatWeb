@@ -1,0 +1,14 @@
+﻿.f-sep { display:none !important;}
+
+.froala-editor { border-color:#999; border-top:3px solid #555; z-index:1120 !important; }
+.froala-element.f-basic { border-color:#999;}
+.f-html .froala-element { background:#3c3c3c;}
+.froala-element p, p.fr-tag { margin:0px;}
+.froala-editor .bttn-wrapper:not(.touch) button.fr-bttn:hover, .froala-editor .froala-popup button.fr-bttn:hover, .froala-editor .bttn-wrapper:not(.touch) button.fr-trigger:hover, .froala-editor .froala-popup button.fr-trigger:hover { background:#59b9f1; }
+
+@media only screen and (max-width:640px){
+    #td .froala-editor { border-left:none; border-right:none;}
+    #td .froala-element.f-basic { border-left:none; border-right:none;}
+}
+
+.am-modal .am-modal-dialog { box-shadow:0px 2px 25px  -2px rgba(0,0,0,0.2); }

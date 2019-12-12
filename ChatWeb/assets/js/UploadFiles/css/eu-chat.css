@@ -1,0 +1,4 @@
+.eu-container { border:none; border-bottom:1px dashed #eee; background:#FFF; padding:16px;}
+.eu-container .eu-head .eu_select {  border: none; color:#FFF; background:#39ace4; }
+.eu-container .eu-head .eu_select:hover { background:#26a3b1; }
+.eu-container .queue { max-height: 160px; overflow-y:auto;}

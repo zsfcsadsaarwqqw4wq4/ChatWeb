@@ -1,0 +1,123 @@
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+#main {
+    padding: 16px;
+    padding-bottom: 60px;
+    float:right;
+    width:80%;
+}
+#NoteVal {
+    display: none;
+}
+
+.wp-add-note {
+float:left;
+width:18%;
+position:fixed;
+}
+
+.wp-add-content {
+
+float:right;
+width:81%;
+position:fixed;
+margin-left:19%;
+}
+
+.wp-editors {
+    display: flex;
+    margin-bottom: 32px;
+}
+    .wp-editors > div:nth-of-type(1) {
+        width: 100%;
+    }
+    .wp-editors > .wp-btn {
+        width: 100px;
+    }
+.fr-wrapper {
+    min-height: 150px;
+}
+.wp-btn >div {
+    text-align:center;
+}
+    .wp-btn > div > a {
+        display: inline-block;
+        width: 50px;
+        margin: 0 auto;
+        text-decoration: none;
+        color: #666;
+        font-size: 12px;
+    }
+        .wp-btn > div > a > i {
+            display: inline-block;
+            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            border-radius: 50%;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s ease;
+            margin-bottom: 5px;
+        }
+
+.wp-task {
+    margin-bottom: 10px;
+}
+    .wp-task > a > i {
+        color: #ffffff;
+        background: #39ace4;
+    }
+    .wp-task > a:hover > i {
+        opacity: 0.8;
+    }
+.wp-delete > a > i {
+    background: #eee;
+    color: #aaa;
+    transition: color .2s ease;
+}
+.wp-delete > a:hover > i {
+    color: #f77373;
+}
+
+.fr-view {
+    min-height: 160px !important;
+    border: 1px solid #ddd;
+}
+
+    .fr-view > p {
+        color: #2d2d2d;
+    }
+
+.wp-footer {
+    /* width: 100%;
+    position: fixed;*/
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    background: #39ace4;
+    cursor: pointer;
+    z-index: 4;
+    transition: all .2s ease;
+}
+    .wp-footer:hover {
+        opacity:0.8;
+    }
+    .wp-footer > p {
+        margin: 0;
+        padding: 16px;
+        user-select: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: 600;
+        color: #ffffff;
+    }
+    .wp-footer .iconfont {
+        border-radius: 0;
+        font-weight: 500;
+        transform: translateX(-20%)
+    }

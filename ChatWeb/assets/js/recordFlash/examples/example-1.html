@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+  	<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  	<title>Recorder Example</title>
+    <link rel="stylesheet" type="text/css" href="example.css" />
+  </head>
+  <body>      
+    <script type="text/javascript" src="../recorder.js"></script>
+    <script>
+    
+        RecorderFlash.initialize({
+            swfSrc: "../recorder.swf"
+        });
+
+        function record() {
+            RecorderFlash.record({
+                start: function () { },
+            });
+        }
+      
+        function stop() {
+            RecorderFlash.stop();
+        }
+      
+  </script>
+  
+    <div id="wrapper">
+      <h1><a href="http://github.com/jwagener/recorder">Recorder Example</a></h1>
+      <p>
+        This is a very basic example for the Recorder.js.
+        Checkout <a href="http://github.com/jwagener/recorder">GitHub</a> for details and have a look at the source for this file.
+        Start by clicking record:
+      </p>
+        <div>
+          <a href="javascript:record()"  id="record">Record</a>
+          <a href="javascript:play()"    id="play">Play</a> 
+          <a href="javascript:stop()"    id="stop">Stop</a>
+          <a href="javascript:upload()"  id="upload">Upload (faked)</a>
+        </div>
+        
+        <span id="time">0:00</span>
+    </div>
+  </body>
+</html>

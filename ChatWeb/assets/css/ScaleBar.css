@@ -1,0 +1,184 @@
+.br-box {
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    padding-bottom: 50px;
+    transition:all .5s ease;
+}
+    .br-box div {
+        box-sizing: border-box;
+        text-align: center;
+        user-select: none;
+        color: #2d2d2d;
+        cursor: pointer;
+        position: relative;
+        outline: 0px solid rgba(255,255,255,0);
+        transition: all .2s ease;
+        z-index: 1;
+    }
+    .br-box div:hover {
+        z-index:2;
+    }
+        .br-box div > span {
+            position:relative;
+            box-sizing: border-box;
+            display: block;
+            width: 100%;
+            height: 10px;
+            z-index: 2;
+        }
+            .br-box div > span > em {
+                top: 0px;
+                padding-top: 24px;
+                position: absolute;
+                box-sizing: border-box;
+                display: block;
+                width: 100%;
+                text-align: center;
+                font-size: 12px;
+                font-style: normal;
+                min-width:50px;
+            }
+        .br-box div.br-small > span > em {
+            display: none;
+        }
+        .br-box div > span > em:before {
+            content: "";
+            display: inline-block;
+            position: absolute;
+            border-left: 1px solid #ddd;
+            top: 16px;
+            left: 50%;
+            height: 6px;
+            text-align: center;
+        }
+        .br-box div > b {
+            box-sizing: border-box;
+            display: block;
+            width: 100%;
+            height: 10px;
+            position: absolute;
+            transition: all .2s ease;
+            z-index: 1;
+            left: 0;
+            top: 0;
+        }
+        .br-box div:hover > b {
+            top: -7px;
+            height: 25px;
+        }
+    .br-box > div:first-child > span {
+        border-radius: 10px 0 0 10px;
+    }
+
+    .br-box > div:last-child > span {
+        border-radius: 0 10px 10px 0;
+    }
+    .br-box > div > b {
+        border-radius: 50%;
+    }
+
+    .br-box div:hover > b {
+        background: #F4F4F4;
+    }
+    .br-box div:nth-of-type(1) > span {
+        background: #39ace4;
+    }
+    .br-box div:nth-of-type(2) > span {
+        background: #6277b3;
+    }
+    .br-box div:nth-of-type(3) > span {
+        background: #886ae0;
+    }
+    .br-box div:nth-of-type(4) > span {
+        background: #ff01c0;
+    }
+    .br-box div:nth-of-type(5) > span {
+        background: #ddd;
+    }
+
+@media screen and (min-width:641px) {
+    .br-box div > span > em {
+        width: 100% !important;
+    }
+}
+
+@media screen and (max-width:640px) {
+    .br-box {
+        display: block;
+        padding-bottom: 0;
+    }
+
+        .br-box div {
+            width: 100% !important;
+            overflow: hidden;
+            transition: all .3s ease;
+        }
+
+            .br-box div > span {
+                width: 200%;
+                border-radius: 0 !important;
+                background: #F2F2F2 !important;
+                transition: all .3s ease;
+                height: 40px;
+            }
+
+                .br-box div > span > em {
+                    width: auto;
+                    height: 100%;
+                    left: 0px;
+                    color: #FFF;
+                    padding-top: 5px;
+                    text-align: left;
+                    padding-left: 16px;
+                    white-space: nowrap;
+                }
+
+            .br-box div.br-small > span > em {
+                display: block;
+                white-space: nowrap;
+                min-width: 60px;
+            }
+
+            .br-box div:nth-of-type(1) > span > em {
+                background: #39ace4;
+            }
+
+            .br-box div:nth-of-type(2) > span > em {
+                background: #6277b3;
+            }
+
+            .br-box div:nth-of-type(3) > span > em {
+                background: #886ae0;
+            }
+
+            .br-box div:nth-of-type(4) > span > em {
+                background: #ff01c0;
+            }
+
+            .br-box div:nth-of-type(5) > span > em {
+                background: #ccc;
+            }
+
+            .br-box div > span > em::before {
+                display: none;
+            }
+
+            .br-box div > b {
+                border-radius: 0 !important;
+                background: #FFF !important;
+                width: 0;
+                opacity: 0;
+                z-index: 3;
+                height: 40px !important;
+                transition: all .5s ease;
+            }
+
+            .br-box div:hover > b {
+                width: 100%;
+                top: 0;
+                left: 0;
+                opacity: 0.3;
+                z-index: 5;
+            }
+}
