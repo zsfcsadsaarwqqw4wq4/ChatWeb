@@ -53,9 +53,9 @@ namespace Model
         public virtual DbSet<Reply> Reply { get; set; }
         public virtual DbSet<ThemeType> ThemeType { get; set; }
         public virtual DbSet<Theme> Theme { get; set; }
-        public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Friends> Friends { get; set; }
         public virtual DbSet<Messages> Messages { get; set; }
         public virtual DbSet<Agent> Agent { get; set; }
+        public virtual DbSet<User> User { get; set; }
     }
 }

@@ -32,10 +32,10 @@
         <EntityTypeShape EntityType="ChatModel.Reply" Width="1.5" PointX="7.5" PointY="15.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ChatModel.ThemeType" Width="1.5" PointX="5.75" PointY="15.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ChatModel.Theme" Width="1.5" PointX="0.75" PointY="15.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ChatModel.User" Width="1.5" PointX="15.375" PointY="4.5" IsExpanded="false" />
         <EntityTypeShape EntityType="ChatModel.Friends" Width="1.5" PointX="15.375" PointY="5.75" IsExpanded="false" />
         <EntityTypeShape EntityType="ChatModel.Messages" Width="1.5" PointX="15.375" PointY="0.75" IsExpanded="false" />
         <EntityTypeShape EntityType="ChatModel.Agent" Width="1.5" PointX="15.375" PointY="7.75" />
+        <EntityTypeShape EntityType="ChatModel.User" Width="1.5" PointX="15.375" PointY="10.75" IsExpanded="false" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

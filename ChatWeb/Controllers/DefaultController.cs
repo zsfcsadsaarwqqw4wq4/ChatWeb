@@ -67,6 +67,7 @@ namespace ChatWeb.Controllers
                 ThemeTypeID=us.ThemeTypeID,
                 IsEnterSendMsg=us.IsEnterSendMsg,
                 SecondThemeTypeID=us.SecondThemeTypeID,
+                ChatSwitch=us.ChatSwitch,
                 Problem =data,
                 AvatarSet = imgs
             };
@@ -547,6 +548,30 @@ namespace ChatWeb.Controllers
             int secondthemetypeid = int.Parse(GetParams("secondthemetypeid"));
             us.ThemeTypeID = themetypeid;
             us.SecondThemeTypeID = secondthemetypeid;
+            if (!ub.EditUser(us))
+            {
+                resultdata.msg = "设置失败";
+                return Json(resultdata);
+            }
+            else
+            {
+                resultdata.res = 200;
+                resultdata.msg = "设置成功";
+            }
+            return Json(resultdata);
+        }
+        /// <summary>
+        /// 设置聊天模式
+        /// </summary>
+        public JsonResult SetChatSwitch()
+        {
+            RequestUser();
+            if (resultData.res == 500)
+            {
+                return Json(resultData);
+            }
+            bool chatswitch=bool.Parse(GetParams("chatswitch"));
+            us.ChatSwitch = chatswitch;
             if (!ub.EditUser(us))
             {
                 resultdata.msg = "设置失败";

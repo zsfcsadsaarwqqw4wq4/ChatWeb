@@ -122,6 +122,7 @@ namespace DAL
                 us.ThemeTypeID = user.ThemeTypeID;
                 us.SecondThemeTypeID = user.SecondThemeTypeID;
                 us.IsEnterSendMsg = user.IsEnterSendMsg;
+                us.ChatSwitch = user.ChatSwitch;
                 return db.SaveChanges() > 0;
             }
         }

@@ -181,7 +181,7 @@ namespace ChatWeb.Controllers
                     user.IsEnterSendMsg = false;    
                     user.ChatTimeLimit = "0";
                     user.Shape = 1;
-
+                    user.ChatSwitch = true;
                     if (ub.CreateUser(user))
                     {
                         resultUser.res = 200;

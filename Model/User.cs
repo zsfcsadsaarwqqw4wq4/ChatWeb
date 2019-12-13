@@ -54,5 +54,6 @@ namespace Model
         public Nullable<int> ThemeTypeID { get; set; }
         public Nullable<int> SecondThemeTypeID { get; set; }
         public Nullable<bool> IsEnterSendMsg { get; set; }
+        public Nullable<bool> ChatSwitch { get; set; }
     }
 }
