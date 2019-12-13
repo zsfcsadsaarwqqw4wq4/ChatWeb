@@ -13,6 +13,7 @@ using System.Web;
 using Common;
 using System.Threading.Tasks;
 using BLL;
+using ChatWeb.App_Start;
 
 namespace ChatWeb
 {
@@ -193,6 +194,9 @@ namespace ChatWeb
             catch(Exception ex)
             {
                 DateTime time = DateTime.Now;
+                Redis redis=new Redis();
+                var result= redis.StringGet(loginid);
+                var headimg=result["HeadPortrait"];
                 var temp = new
                 {
                     userid = userid,
@@ -200,6 +204,7 @@ namespace ChatWeb
                     msg = msg,
                     loginid = loginid,
                     uid = uid,
+                    userheadportrait=headimg,
                     guid=guid,
                     messagestypeid = EnumHelper.Message.four,
                     isBART = isBART
