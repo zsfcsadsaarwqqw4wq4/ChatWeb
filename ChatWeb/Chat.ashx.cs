@@ -12,6 +12,7 @@ using System.Threading;
 using System.Web;
 using Common;
 using System.Threading.Tasks;
+using BLL;
 
 namespace ChatWeb
 {

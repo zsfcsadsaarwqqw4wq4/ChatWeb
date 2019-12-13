@@ -32,7 +32,7 @@ namespace ChatWeb.App_Start
             }
         }
         /// <summary>
-        /// 保存一个对象，该对象会被序列化并设置过期时间
+        /// 保存一个对象，该对象会被序列化并设置过期时间,Set方法会自动将对象序列化成一个string类型的json字符串
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
@@ -43,14 +43,13 @@ namespace ChatWeb.App_Start
             //创建Redis连接对象
             using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
             {
-                string data = JsonConvert.SerializeObject(value);
                 //存放string类型数据到内存中
-                bool res = redisclient.Set(key, data, time);
+                bool res = redisclient.Set(key, value, time);
                 return res;
             }
         }
         /// <summary>
-        /// 保存一个对象，该对象会被序列化
+        /// 保存一个对象，该对象会被序列化,并且过滤掉为null的属性
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
@@ -61,9 +60,11 @@ namespace ChatWeb.App_Start
             //创建Redis连接对象
             using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
             {
-                string data=JsonConvert.SerializeObject(value);
+                //var jsonSetting=new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore };
+                //string data=JsonConvert.SerializeObject(value,Formatting.None, jsonSetting);
+                //data=data.Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", "");
                 //存放string类型数据到内存中
-                bool res = redisclient.Set(key, data);
+                bool res = redisclient.Set(key, value);
                 return res;
             }
         }
@@ -73,17 +74,16 @@ namespace ChatWeb.App_Start
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
         /// <returns></returns>
-        public T StringGet<T>(string key)
+        public IDictionary<string,object> StringGet(string key)
         {
             using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
             {
-                string data = string.Empty;
-                data=redisclient.GetValue(key);
+                var data=redisclient.GetValue(key);
                 if(data!=null)
-                {
-                    return JsonConvert.DeserializeObject<T>(data);
+                {                   
+                    return JsonConvert.DeserializeObject<IDictionary<string,object>>(data);
                 }
-                return default(T);
+                return null;
             }
         }
         /// <summary>

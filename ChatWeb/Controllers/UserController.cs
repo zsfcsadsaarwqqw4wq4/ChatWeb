@@ -86,7 +86,7 @@ namespace ChatWeb.Controllers
                 }
                 else
                 {
-                    var result=redis.GetString(user.LoginID);
+                    var result=redis.StringGet(user.LoginID);
                     if (result!=null)
                     {
                         resultUser.msg = "该用户已经登录了";
@@ -101,7 +101,7 @@ namespace ChatWeb.Controllers
                         var times = 2*60* 1000;
                         var time=TimeSpan.FromMilliseconds(times);              
                         //用redis保存用户登录的信息
-                        redis.SetString(user.LoginID,user.LoginID,time);
+                        redis.StringSet(user.LoginID,user,time);
                     }
                     else if (password.Equals(user.PassWords))
                     {
