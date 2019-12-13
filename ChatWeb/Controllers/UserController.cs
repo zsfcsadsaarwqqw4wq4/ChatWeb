@@ -97,11 +97,9 @@ namespace ChatWeb.Controllers
                         resultUser.res = 200;
                         resultUser.state = 1;
                         resultUser.msg = "用户是登录的私密聊天";
-                        resultUser.data = JwtHelper.CreateToken(user);
-                        var times = 24*60* 1000;
-                        var time=TimeSpan.FromMilliseconds(times);              
+                        resultUser.data = JwtHelper.CreateToken(user);          
                         //用redis保存用户登录的信息
-                        redis.StringSet(user.LoginID,user,time);
+                        redis.StringSet(user.LoginID,user);
                     }
                     else if (password.Equals(user.PassWords))
                     {
