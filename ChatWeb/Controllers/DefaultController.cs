@@ -134,6 +134,7 @@ namespace ChatWeb.Controllers
             Chat.SendMsg(userid, uid, guid, messagestypeid);
             return Json(new { });
         }       
+
         /// <summary>
         /// 发送图片
         /// </summary>

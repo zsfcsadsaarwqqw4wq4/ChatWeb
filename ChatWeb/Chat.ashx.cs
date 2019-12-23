@@ -313,6 +313,7 @@ namespace ChatWeb
                 {
                     MESSAGE_POOL[uid].Add(new MessageInfo(buffer));//添加离线消息
                 }
+
             }
         }
         /// <summary>

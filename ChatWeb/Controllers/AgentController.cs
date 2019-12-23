@@ -14,7 +14,6 @@ namespace ChatWeb.Controllers
     public class AgentController : BaseController
     {
         AgentBLL ab=new AgentBLL();
-        RoleBLL rb = new RoleBLL();
         ResultData resultdata = new ResultData();
         // GET: Agent
         public ActionResult Index()
@@ -36,7 +35,6 @@ namespace ChatWeb.Controllers
             Agent agent=ab.GetAgent(uid);
             if(agent.Level!=0)
             {
-
             };
             if (agent != null)
             {
@@ -45,7 +43,8 @@ namespace ChatWeb.Controllers
                 resultdata.data = agent;
             }
             return Json(resultdata);
-        }
+        }       
+        
         /// <summary>
         /// 设置用户代理信息
         /// </summary>
@@ -58,7 +57,7 @@ namespace ChatWeb.Controllers
             }
             int uid = us.ID;
             AgentModel agentmodel=new AgentModel();
-            agentmodel=ab.GetAgentModel(uid);
+            agentmodel=ab.GetAgentModel(uid);        
             if (agentmodel != null)
             {
                 resultdata.res = 200;
@@ -66,6 +65,6 @@ namespace ChatWeb.Controllers
                 resultdata.data = agentmodel;
             }
             return Json(resultdata);
-        }        
+        }             
     }
 }

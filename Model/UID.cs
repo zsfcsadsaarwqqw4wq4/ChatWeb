@@ -12,10 +12,10 @@ namespace Model
     using System;
     using System.Collections.Generic;
     
-    public partial class Role_Agent
+    public partial class UID
     {
         public int ID { get; set; }
-        public Nullable<int> RoleID { get; set; }
-        public Nullable<int> UserAgentID { get; set; }
+        public string UDID { get; set; }
+        public bool State { get; set; }
     }
 }

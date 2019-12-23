@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ChatWeb.App_Start;
+using FluentScheduler;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -16,6 +18,7 @@ namespace ChatWeb
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            JobManager.Initialize(new MyRegistry());
         }
     }
 }

@@ -44,6 +44,22 @@ namespace DAL
             }
         }
         /// <summary>
+        /// 查询当前用户的父级代理
+        /// </summary>
+        public int QueryParentAgent(int uid)
+        {
+            using (ChatEntities db=new ChatEntities())
+            {
+                var data=db.Agent.FirstOrDefault(o=>o.UserID==uid);
+                if(data!=null)
+                {
+                    int id = Convert.ToInt32(data.ParentID);
+                    return id;
+                }
+                return 0;
+            }
+        }
+        /// <summary>
         /// 修改代理关系
         /// </summary>
         /// <param name="a"></param>

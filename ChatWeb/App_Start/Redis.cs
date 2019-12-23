@@ -49,7 +49,7 @@ namespace ChatWeb.App_Start
             }
         }
         /// <summary>
-        /// 保存一个对象，该对象会被序列化,并且过滤掉为null的属性
+        /// 保存一个对象，该对象会被序列化
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
@@ -69,7 +69,7 @@ namespace ChatWeb.App_Start
             }
         }
         /// <summary>
-        /// 获取一个songong对象，该对象是通过反序列化得到
+        /// 获取一个object对象，该对象是通过反序列化得到
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="key"></param>
@@ -122,6 +122,19 @@ namespace ChatWeb.App_Start
             {
                 //存放string类型数据到内存中
                 bool res = redisclient.Set<string>(key, value);
+                return res;
+            }
+        }
+        /// <summary>
+        /// 存储int类型数据无过期时间
+        /// </summary>
+        public bool SetInt(string key, int value)
+        {
+            //创建Redis连接对象
+            using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
+            {
+                //存放string类型数据到内存中
+                bool res = redisclient.Set<int>(key, value);
                 return res;
             }
         }

@@ -15,12 +15,12 @@ namespace Model
     public partial class AgentPower
     {
         public int ID { get; set; }
-        public Nullable<int> RoleID { get; set; }
-        public Nullable<bool> BChild { get; set; }
-        public Nullable<bool> BChildMoney { get; set; }
-        public Nullable<bool> BRecvMoney { get; set; }
-        public Nullable<bool> BChildChild { get; set; }
-        public Nullable<bool> BChildChildMoney { get; set; }
-        public Nullable<bool> BChildChildRecvMoney { get; set; }
+        public int UserID { get; set; }
+        public bool BChild { get; set; }
+        public bool BChildMoney { get; set; }
+        public bool BRecvMoney { get; set; }
+        public bool BChildChild { get; set; }
+        public bool BChildChildMoney { get; set; }
+        public bool BChildChildRecvMoney { get; set; }
     }
 }

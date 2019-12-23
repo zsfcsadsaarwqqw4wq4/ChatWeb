@@ -46,7 +46,7 @@ namespace ChatWeb.App_Start
             if (pushList.Count>0)
             {
                 foreach (var model in pushList)
-                {
+                {                    
                     notification.AndroidNotification.AddExtra(model.Key, model.Value);//Android推送消息
                     notification.IosNotification.AddExtra(model.Key, model.Value);//IOS推送消息
                     notification.IosNotification.setSound("happy");

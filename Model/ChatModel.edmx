@@ -53,13 +53,13 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="RoleID" Type="int" />
-          <Property Name="BChild" Type="bit" />
-          <Property Name="BChildMoney" Type="bit" />
-          <Property Name="BRecvMoney" Type="bit" />
-          <Property Name="BChildChild" Type="bit" />
-          <Property Name="BChildChildMoney" Type="bit" />
-          <Property Name="BChildChildRecvMoney" Type="bit" />
+          <Property Name="UserID" Type="int" Nullable="false" />
+          <Property Name="BChild" Type="bit" Nullable="false" />
+          <Property Name="BChildMoney" Type="bit" Nullable="false" />
+          <Property Name="BRecvMoney" Type="bit" Nullable="false" />
+          <Property Name="BChildChild" Type="bit" Nullable="false" />
+          <Property Name="BChildChildMoney" Type="bit" Nullable="false" />
+          <Property Name="BChildChildRecvMoney" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ChatLevel">
           <Key>
@@ -238,21 +238,6 @@
           <Property Name="ReplyID" Type="int" Nullable="false" />
           <Property Name="ThemeID" Type="int" Nullable="false" />
         </EntityType>
-        <EntityType Name="Role">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="RoleName" Type="nvarchar" MaxLength="200" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Role_Agent">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="RoleID" Type="int" />
-          <Property Name="UserAgentID" Type="int" />
-        </EntityType>
         <EntityType Name="State">
           <Key>
             <PropertyRef Name="ID" />
@@ -277,6 +262,14 @@
           </Key>
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TypeName" Type="nvarchar" MaxLength="500" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UID">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UDID" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="State" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -324,14 +317,6 @@
           <Property Name="IsEnterSendMsg" Type="bit" />
           <Property Name="ChatSwitch" Type="bit" />
         </EntityType>
-        <EntityType Name="User_Role">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="UserID" Type="int" Nullable="false" />
-          <Property Name="RoleID" Type="int" Nullable="false" />
-        </EntityType>
         <EntityType Name="UserPay">
           <Key>
             <PropertyRef Name="ID" />
@@ -367,19 +352,60 @@
           <EntitySet Name="Nation" EntityType="Self.Nation" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Province" EntityType="Self.Province" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Reply" EntityType="Self.Reply" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="Role_Agent" EntityType="Self.Role_Agent" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="State" EntityType="Self.State" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Theme" EntityType="Self.Theme" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ThemeType" EntityType="Self.ThemeType" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UID" EntityType="Self.UID" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="User_Role" EntityType="Self.User_Role" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserPay" EntityType="Self.UserPay" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="ChatModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="ChatEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Agent" EntityType="ChatModel.Agent" />
+          <EntitySet Name="AgentMoney" EntityType="ChatModel.AgentMoney" />
+          <EntitySet Name="AgentPercent" EntityType="ChatModel.AgentPercent" />
+          <EntitySet Name="AgentPerModel" EntityType="ChatModel.AgentPerModel" />
+          <EntitySet Name="ChatLevel" EntityType="ChatModel.ChatLevel" />
+          <EntitySet Name="City" EntityType="ChatModel.City" />
+          <EntitySet Name="FriendGroups" EntityType="ChatModel.FriendGroups" />
+          <EntitySet Name="Friends" EntityType="ChatModel.Friends" />
+          <EntitySet Name="FriendshipPolicy" EntityType="ChatModel.FriendshipPolicy" />
+          <EntitySet Name="FriendType" EntityType="ChatModel.FriendType" />
+          <EntitySet Name="Groups" EntityType="ChatModel.Groups" />
+          <EntitySet Name="GroupsMSGContent" EntityType="ChatModel.GroupsMSGContent" />
+          <EntitySet Name="GroupsMSGToUser" EntityType="ChatModel.GroupsMSGToUser" />
+          <EntitySet Name="GroupsMSGUserToUser" EntityType="ChatModel.GroupsMSGUserToUser" />
+          <EntitySet Name="GroupsToUser" EntityType="ChatModel.GroupsToUser" />
+          <EntitySet Name="Invitation" EntityType="ChatModel.Invitation" />
+          <EntitySet Name="Logo" EntityType="ChatModel.Logo" />
+          <EntitySet Name="Messages" EntityType="ChatModel.Messages" />
+          <EntitySet Name="MessagesStillType" EntityType="ChatModel.MessagesStillType" />
+          <EntitySet Name="MessagesType" EntityType="ChatModel.MessagesType" />
+          <EntitySet Name="Nation" EntityType="ChatModel.Nation" />
+          <EntitySet Name="Province" EntityType="ChatModel.Province" />
+          <EntitySet Name="Reply" EntityType="ChatModel.Reply" />
+          <EntitySet Name="State" EntityType="ChatModel.State" />
+          <EntitySet Name="Theme" EntityType="ChatModel.Theme" />
+          <EntitySet Name="ThemeType" EntityType="ChatModel.ThemeType" />
+          <EntitySet Name="User" EntityType="ChatModel.User" />
+          <EntitySet Name="UserPay" EntityType="ChatModel.UserPay" />
+          <EntitySet Name="AgentPower" EntityType="ChatModel.AgentPower" />
+          <EntitySet Name="UID" EntityType="ChatModel.UID" />
+        </EntityContainer>
+        <EntityType Name="Agent">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="ParentID" Type="Int32" />
+          <Property Name="Status" Type="Boolean" />
+          <Property Name="Percent" Type="Int32" />
+          <Property Name="Level" Type="Int32" />
+        </EntityType>
         <EntityType Name="AgentMoney">
           <Key>
             <PropertyRef Name="ID" />
@@ -410,20 +436,7 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="AgentPower">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="RoleID" Type="Int32" />
-          <Property Name="BChild" Type="Boolean" />
-          <Property Name="BChildMoney" Type="Boolean" />
-          <Property Name="BRecvMoney" Type="Boolean" />
-          <Property Name="BChildChild" Type="Boolean" />
-          <Property Name="BChildChildMoney" Type="Boolean" />
-          <Property Name="BChildChildRecvMoney" Type="Boolean" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ChatLevel">
           <Key>
@@ -439,7 +452,7 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ProvinceID" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="FriendGroups">
@@ -447,43 +460,56 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="UserID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Friends">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirendID" Type="Int32" Nullable="false" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FriendTypeID" Type="Int32" />
+          <Property Name="FriendGroupsID" Type="Int32" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="OverdueTime" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <EntityType Name="FriendshipPolicy">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FriendshipPolicy1" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FriendshipPolicy1" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="FriendType">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Groups">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="CreateTime" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="AdminID" Type="Int32" Nullable="false" />
-          <Property Name="ICon" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Notice" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Intro" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ICon" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Notice" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Intro" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="GroupsMSGContent">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Content" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Content" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="FromID" Type="Int32" Nullable="false" />
-          <Property Name="FromUName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FromUName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="CreateTime" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <EntityType Name="GroupsMSGToUser">
@@ -502,9 +528,9 @@
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="FromUserID" Type="Int32" Nullable="false" />
-          <Property Name="FromUserName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FromUserName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="ToUserID" Type="Int32" Nullable="false" />
-          <Property Name="MSGContent" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="MSGContent" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="State" Type="Boolean" Nullable="false" />
           <Property Name="CreateTime" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="UserGroupID" Type="Int32" Nullable="false" />
@@ -519,118 +545,6 @@
           <Property Name="CreateTime" Type="DateTime" Precision="3" />
           <Property Name="GroupNick" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="Logo">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="ICO" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="MessagesStillType">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
-        </EntityType>
-        <EntityType Name="MessagesType">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Nation">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Province">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="NationID" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Role">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="RoleName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Role_Agent">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="RoleID" Type="Int32" />
-          <Property Name="UserAgentID" Type="Int32" />
-        </EntityType>
-        <EntityType Name="State">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
-        </EntityType>
-        <EntityType Name="User_Role">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserID" Type="Int32" Nullable="false" />
-          <Property Name="RoleID" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="UserPay">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserID" Type="Int32" Nullable="false" />
-          <Property Name="PayMoney" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
-          <Property Name="PayTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Type" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityContainer Name="ChatEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="AgentMoney" EntityType="Self.AgentMoney" />
-          <EntitySet Name="AgentPercent" EntityType="Self.AgentPercent" />
-          <EntitySet Name="AgentPerModel" EntityType="Self.AgentPerModel" />
-          <EntitySet Name="AgentPower" EntityType="Self.AgentPower" />
-          <EntitySet Name="ChatLevel" EntityType="Self.ChatLevel" />
-          <EntitySet Name="City" EntityType="Self.City" />
-          <EntitySet Name="FriendGroups" EntityType="Self.FriendGroups" />
-          <EntitySet Name="FriendshipPolicy" EntityType="Self.FriendshipPolicy" />
-          <EntitySet Name="FriendType" EntityType="Self.FriendType" />
-          <EntitySet Name="Groups" EntityType="Self.Groups" />
-          <EntitySet Name="GroupsMSGContent" EntityType="Self.GroupsMSGContent" />
-          <EntitySet Name="GroupsMSGToUser" EntityType="Self.GroupsMSGToUser" />
-          <EntitySet Name="GroupsMSGUserToUser" EntityType="Self.GroupsMSGUserToUser" />
-          <EntitySet Name="GroupsToUser" EntityType="Self.GroupsToUser" />
-          <EntitySet Name="Logo" EntityType="Self.Logo" />
-          <EntitySet Name="MessagesStillType" EntityType="Self.MessagesStillType" />
-          <EntitySet Name="MessagesType" EntityType="Self.MessagesType" />
-          <EntitySet Name="Nation" EntityType="Self.Nation" />
-          <EntitySet Name="Province" EntityType="Self.Province" />
-          <EntitySet Name="Role" EntityType="Self.Role" />
-          <EntitySet Name="Role_Agent" EntityType="Self.Role_Agent" />
-          <EntitySet Name="State" EntityType="Self.State" />
-          <EntitySet Name="User_Role" EntityType="Self.User_Role" />
-          <EntitySet Name="UserPay" EntityType="Self.UserPay" />
-          <EntitySet Name="Invitation" EntityType="ChatModel.Invitation" />
-          <EntitySet Name="Reply" EntityType="ChatModel.Reply" />
-          <EntitySet Name="ThemeType" EntityType="ChatModel.ThemeType" />
-          <EntitySet Name="Theme" EntityType="ChatModel.Theme" />
-          <EntitySet Name="Friends" EntityType="ChatModel.Friends" />
-          <EntitySet Name="Messages" EntityType="ChatModel.Messages" />
-          <EntitySet Name="Agent" EntityType="ChatModel.Agent" />
-          <EntitySet Name="User" EntityType="ChatModel.User" />
-        </EntityContainer>
         <EntityType Name="Invitation">
           <Key>
             <PropertyRef Name="ID" />
@@ -640,45 +554,13 @@
           <Property Name="InviteCode" Type="Int32" Nullable="false" />
           <Property Name="EndTime" Type="DateTime" Precision="3" />
         </EntityType>
-        <EntityType Name="Reply">
+        <EntityType Name="Logo">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ReplyContent" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="ReplyID" Type="Int32" Nullable="false" />
-          <Property Name="ThemeID" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="ThemeType">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="TypeName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="Theme">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="ThemeTypeID" Type="Int32" Nullable="false" />
-          <Property Name="FirstTheme" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="Title" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="Content" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="ThemeImage" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-        </EntityType>
-        <EntityType Name="Friends">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FirendID" Type="Int32" Nullable="false" />
-          <Property Name="UserID" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="FriendTypeID" Type="Int32" />
-          <Property Name="FriendGroupsID" Type="Int32" />
-          <Property Name="Status" Type="Int32" Nullable="false" />
-          <Property Name="OverdueTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ICO" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Messages">
           <Key>
@@ -694,16 +576,69 @@
           <Property Name="Status" Type="Int32" />
           <Property Name="GUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
-        <EntityType Name="Agent">
+        <EntityType Name="MessagesStillType">
           <Key>
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserID" Type="Int32" Nullable="false" />
-          <Property Name="ParentID" Type="Int32" />
-          <Property Name="Status" Type="Boolean" />
-          <Property Name="Percent" Type="Int32" />
-          <Property Name="Level" Type="Int32" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Time" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="MessagesType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Nation">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Province">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="NationID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Reply">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ReplyContent" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ReplyID" Type="Int32" Nullable="false" />
+          <Property Name="ThemeID" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="State">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Theme">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ThemeTypeID" Type="Int32" Nullable="false" />
+          <Property Name="FirstTheme" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Content" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ThemeImage" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="ThemeType">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TypeName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -751,289 +686,114 @@
           <Property Name="IsEnterSendMsg" Type="Boolean" />
           <Property Name="ChatSwitch" Type="Boolean" />
         </EntityType>
-      </Schema>
+        <EntityType Name="UserPay">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="PayMoney" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="PayTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AgentPower">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="BChild" Type="Boolean" Nullable="false" />
+          <Property Name="BChildMoney" Type="Boolean" Nullable="false" />
+          <Property Name="BRecvMoney" Type="Boolean" Nullable="false" />
+          <Property Name="BChildChild" Type="Boolean" Nullable="false" />
+          <Property Name="BChildChildMoney" Type="Boolean" Nullable="false" />
+          <Property Name="BChildChildRecvMoney" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UID">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UDID" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="State" Type="Boolean" Nullable="false" />
+        </EntityType>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="ChatModelStoreContainer" CdmEntityContainer="ChatEntities">
+          <EntitySetMapping Name="Agent">
+            <EntityTypeMapping TypeName="ChatModel.Agent">
+              <MappingFragment StoreEntitySet="Agent">
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Percent" ColumnName="Percent" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="ParentID" ColumnName="ParentID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="AgentMoney">
             <EntityTypeMapping TypeName="ChatModel.AgentMoney">
               <MappingFragment StoreEntitySet="AgentMoney">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="TotalMoney" ColumnName="TotalMoney" />
-                <ScalarProperty Name="TakeMoney" ColumnName="TakeMoney" />
-                <ScalarProperty Name="StoreMoney" ColumnName="StoreMoney" />
-                <ScalarProperty Name="CanTakeMoney" ColumnName="CanTakeMoney" />
                 <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="CanTakeMoney" ColumnName="CanTakeMoney" />
+                <ScalarProperty Name="StoreMoney" ColumnName="StoreMoney" />
+                <ScalarProperty Name="TakeMoney" ColumnName="TakeMoney" />
+                <ScalarProperty Name="TotalMoney" ColumnName="TotalMoney" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AgentPercent">
             <EntityTypeMapping TypeName="ChatModel.AgentPercent">
               <MappingFragment StoreEntitySet="AgentPercent">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="ModelID" ColumnName="ModelID" />
-                <ScalarProperty Name="Percent" ColumnName="Percent" />
-                <ScalarProperty Name="ChildP" ColumnName="ChildP" />
-                <ScalarProperty Name="ChildCP" ColumnName="ChildCP" />
-                <ScalarProperty Name="FChild" ColumnName="FChild" />
                 <ScalarProperty Name="SChild" ColumnName="SChild" />
+                <ScalarProperty Name="FChild" ColumnName="FChild" />
+                <ScalarProperty Name="ChildCP" ColumnName="ChildCP" />
+                <ScalarProperty Name="ChildP" ColumnName="ChildP" />
+                <ScalarProperty Name="Percent" ColumnName="Percent" />
+                <ScalarProperty Name="ModelID" ColumnName="ModelID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="AgentPerModel">
             <EntityTypeMapping TypeName="ChatModel.AgentPerModel">
               <MappingFragment StoreEntitySet="AgentPerModel">
-                <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AgentPower">
-            <EntityTypeMapping TypeName="ChatModel.AgentPower">
-              <MappingFragment StoreEntitySet="AgentPower">
                 <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
-                <ScalarProperty Name="BChild" ColumnName="BChild" />
-                <ScalarProperty Name="BChildMoney" ColumnName="BChildMoney" />
-                <ScalarProperty Name="BRecvMoney" ColumnName="BRecvMoney" />
-                <ScalarProperty Name="BChildChild" ColumnName="BChildChild" />
-                <ScalarProperty Name="BChildChildMoney" ColumnName="BChildChildMoney" />
-                <ScalarProperty Name="BChildChildRecvMoney" ColumnName="BChildChildRecvMoney" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="ChatLevel">
             <EntityTypeMapping TypeName="ChatModel.ChatLevel">
               <MappingFragment StoreEntitySet="ChatLevel">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Disc" ColumnName="Disc" />
-                <ScalarProperty Name="Level" ColumnName="Level" />
                 <ScalarProperty Name="Video" ColumnName="Video" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Disc" ColumnName="Disc" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="City">
             <EntityTypeMapping TypeName="ChatModel.City">
               <MappingFragment StoreEntitySet="City">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ProvinceID" ColumnName="ProvinceID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="FriendGroups">
             <EntityTypeMapping TypeName="ChatModel.FriendGroups">
               <MappingFragment StoreEntitySet="FriendGroups">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="FriendshipPolicy">
-            <EntityTypeMapping TypeName="ChatModel.FriendshipPolicy">
-              <MappingFragment StoreEntitySet="FriendshipPolicy">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="FriendshipPolicy1" ColumnName="FriendshipPolicy" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="FriendType">
-            <EntityTypeMapping TypeName="ChatModel.FriendType">
-              <MappingFragment StoreEntitySet="FriendType">
-                <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Groups">
-            <EntityTypeMapping TypeName="ChatModel.Groups">
-              <MappingFragment StoreEntitySet="Groups">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
-                <ScalarProperty Name="AdminID" ColumnName="AdminID" />
-                <ScalarProperty Name="ICon" ColumnName="ICon" />
-                <ScalarProperty Name="Notice" ColumnName="Notice" />
-                <ScalarProperty Name="Intro" ColumnName="Intro" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="GroupsMSGContent">
-            <EntityTypeMapping TypeName="ChatModel.GroupsMSGContent">
-              <MappingFragment StoreEntitySet="GroupsMSGContent">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="FromID" ColumnName="FromID" />
-                <ScalarProperty Name="FromUName" ColumnName="FromUName" />
-                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="GroupsMSGToUser">
-            <EntityTypeMapping TypeName="ChatModel.GroupsMSGToUser">
-              <MappingFragment StoreEntitySet="GroupsMSGToUser">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="GroupMessageID" ColumnName="GroupMessageID" />
-                <ScalarProperty Name="State" ColumnName="State" />
-                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="GroupsMSGUserToUser">
-            <EntityTypeMapping TypeName="ChatModel.GroupsMSGUserToUser">
-              <MappingFragment StoreEntitySet="GroupsMSGUserToUser">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="FromUserID" ColumnName="FromUserID" />
-                <ScalarProperty Name="FromUserName" ColumnName="FromUserName" />
-                <ScalarProperty Name="ToUserID" ColumnName="ToUserID" />
-                <ScalarProperty Name="MSGContent" ColumnName="MSGContent" />
-                <ScalarProperty Name="State" ColumnName="State" />
-                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
-                <ScalarProperty Name="UserGroupID" ColumnName="UserGroupID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="GroupsToUser">
-            <EntityTypeMapping TypeName="ChatModel.GroupsToUser">
-              <MappingFragment StoreEntitySet="GroupsToUser">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="GroupID" ColumnName="GroupID" />
-                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
-                <ScalarProperty Name="GroupNick" ColumnName="GroupNick" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Logo">
-            <EntityTypeMapping TypeName="ChatModel.Logo">
-              <MappingFragment StoreEntitySet="Logo">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ICO" ColumnName="ICO" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="MessagesStillType">
-            <EntityTypeMapping TypeName="ChatModel.MessagesStillType">
-              <MappingFragment StoreEntitySet="MessagesStillType">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Time" ColumnName="Time" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="MessagesType">
-            <EntityTypeMapping TypeName="ChatModel.MessagesType">
-              <MappingFragment StoreEntitySet="MessagesType">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Nation">
-            <EntityTypeMapping TypeName="ChatModel.Nation">
-              <MappingFragment StoreEntitySet="Nation">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Province">
-            <EntityTypeMapping TypeName="ChatModel.Province">
-              <MappingFragment StoreEntitySet="Province">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="NationID" ColumnName="NationID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Role">
-            <EntityTypeMapping TypeName="ChatModel.Role">
-              <MappingFragment StoreEntitySet="Role">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="RoleName" ColumnName="RoleName" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Role_Agent">
-            <EntityTypeMapping TypeName="ChatModel.Role_Agent">
-              <MappingFragment StoreEntitySet="Role_Agent">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
-                <ScalarProperty Name="UserAgentID" ColumnName="UserAgentID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="State">
-            <EntityTypeMapping TypeName="ChatModel.State">
-              <MappingFragment StoreEntitySet="State">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="User_Role">
-            <EntityTypeMapping TypeName="ChatModel.User_Role">
-              <MappingFragment StoreEntitySet="User_Role">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="RoleID" ColumnName="RoleID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UserPay">
-            <EntityTypeMapping TypeName="ChatModel.UserPay">
-              <MappingFragment StoreEntitySet="UserPay">
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="PayMoney" ColumnName="PayMoney" />
-                <ScalarProperty Name="PayTime" ColumnName="PayTime" />
-                <ScalarProperty Name="Type" ColumnName="Type" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Invitation">
-            <EntityTypeMapping TypeName="ChatModel.Invitation">
-              <MappingFragment StoreEntitySet="Invitation">
-                <ScalarProperty Name="EndTime" ColumnName="EndTime" />
-                <ScalarProperty Name="InviteCode" ColumnName="InviteCode" />
-                <ScalarProperty Name="UID" ColumnName="UID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Reply">
-            <EntityTypeMapping TypeName="ChatModel.Reply">
-              <MappingFragment StoreEntitySet="Reply">
-                <ScalarProperty Name="ThemeID" ColumnName="ThemeID" />
-                <ScalarProperty Name="ReplyID" ColumnName="ReplyID" />
-                <ScalarProperty Name="ReplyContent" ColumnName="ReplyContent" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ThemeType">
-            <EntityTypeMapping TypeName="ChatModel.ThemeType">
-              <MappingFragment StoreEntitySet="ThemeType">
-                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Theme">
-            <EntityTypeMapping TypeName="ChatModel.Theme">
-              <MappingFragment StoreEntitySet="Theme">
-                <ScalarProperty Name="ThemeImage" ColumnName="ThemeImage" />
-                <ScalarProperty Name="Content" ColumnName="Content" />
-                <ScalarProperty Name="Title" ColumnName="Title" />
-                <ScalarProperty Name="FirstTheme" ColumnName="FirstTheme" />
-                <ScalarProperty Name="ThemeTypeID" ColumnName="ThemeTypeID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1048,6 +808,101 @@
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="FirendID" ColumnName="FirendID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FriendshipPolicy">
+            <EntityTypeMapping TypeName="ChatModel.FriendshipPolicy">
+              <MappingFragment StoreEntitySet="FriendshipPolicy">
+                <ScalarProperty Name="FriendshipPolicy1" ColumnName="FriendshipPolicy" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FriendType">
+            <EntityTypeMapping TypeName="ChatModel.FriendType">
+              <MappingFragment StoreEntitySet="FriendType">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Groups">
+            <EntityTypeMapping TypeName="ChatModel.Groups">
+              <MappingFragment StoreEntitySet="Groups">
+                <ScalarProperty Name="Intro" ColumnName="Intro" />
+                <ScalarProperty Name="Notice" ColumnName="Notice" />
+                <ScalarProperty Name="ICon" ColumnName="ICon" />
+                <ScalarProperty Name="AdminID" ColumnName="AdminID" />
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GroupsMSGContent">
+            <EntityTypeMapping TypeName="ChatModel.GroupsMSGContent">
+              <MappingFragment StoreEntitySet="GroupsMSGContent">
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="FromUName" ColumnName="FromUName" />
+                <ScalarProperty Name="FromID" ColumnName="FromID" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GroupsMSGToUser">
+            <EntityTypeMapping TypeName="ChatModel.GroupsMSGToUser">
+              <MappingFragment StoreEntitySet="GroupsMSGToUser">
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="GroupMessageID" ColumnName="GroupMessageID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GroupsMSGUserToUser">
+            <EntityTypeMapping TypeName="ChatModel.GroupsMSGUserToUser">
+              <MappingFragment StoreEntitySet="GroupsMSGUserToUser">
+                <ScalarProperty Name="UserGroupID" ColumnName="UserGroupID" />
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="MSGContent" ColumnName="MSGContent" />
+                <ScalarProperty Name="ToUserID" ColumnName="ToUserID" />
+                <ScalarProperty Name="FromUserName" ColumnName="FromUserName" />
+                <ScalarProperty Name="FromUserID" ColumnName="FromUserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GroupsToUser">
+            <EntityTypeMapping TypeName="ChatModel.GroupsToUser">
+              <MappingFragment StoreEntitySet="GroupsToUser">
+                <ScalarProperty Name="GroupNick" ColumnName="GroupNick" />
+                <ScalarProperty Name="CreateTime" ColumnName="CreateTime" />
+                <ScalarProperty Name="GroupID" ColumnName="GroupID" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Invitation">
+            <EntityTypeMapping TypeName="ChatModel.Invitation">
+              <MappingFragment StoreEntitySet="Invitation">
+                <ScalarProperty Name="EndTime" ColumnName="EndTime" />
+                <ScalarProperty Name="InviteCode" ColumnName="InviteCode" />
+                <ScalarProperty Name="UID" ColumnName="UID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Logo">
+            <EntityTypeMapping TypeName="ChatModel.Logo">
+              <MappingFragment StoreEntitySet="Logo">
+                <ScalarProperty Name="ICO" ColumnName="ICO" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1067,14 +922,74 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Agent">
-            <EntityTypeMapping TypeName="ChatModel.Agent">
-              <MappingFragment StoreEntitySet="Agent">
-                <ScalarProperty Name="Level" ColumnName="Level" />
-                <ScalarProperty Name="Percent" ColumnName="Percent" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="ParentID" ColumnName="ParentID" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <EntitySetMapping Name="MessagesStillType">
+            <EntityTypeMapping TypeName="ChatModel.MessagesStillType">
+              <MappingFragment StoreEntitySet="MessagesStillType">
+                <ScalarProperty Name="Time" ColumnName="Time" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MessagesType">
+            <EntityTypeMapping TypeName="ChatModel.MessagesType">
+              <MappingFragment StoreEntitySet="MessagesType">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Nation">
+            <EntityTypeMapping TypeName="ChatModel.Nation">
+              <MappingFragment StoreEntitySet="Nation">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Province">
+            <EntityTypeMapping TypeName="ChatModel.Province">
+              <MappingFragment StoreEntitySet="Province">
+                <ScalarProperty Name="NationID" ColumnName="NationID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Reply">
+            <EntityTypeMapping TypeName="ChatModel.Reply">
+              <MappingFragment StoreEntitySet="Reply">
+                <ScalarProperty Name="ThemeID" ColumnName="ThemeID" />
+                <ScalarProperty Name="ReplyID" ColumnName="ReplyID" />
+                <ScalarProperty Name="ReplyContent" ColumnName="ReplyContent" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="State">
+            <EntityTypeMapping TypeName="ChatModel.State">
+              <MappingFragment StoreEntitySet="State">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Theme">
+            <EntityTypeMapping TypeName="ChatModel.Theme">
+              <MappingFragment StoreEntitySet="Theme">
+                <ScalarProperty Name="ThemeImage" ColumnName="ThemeImage" />
+                <ScalarProperty Name="Content" ColumnName="Content" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="FirstTheme" ColumnName="FirstTheme" />
+                <ScalarProperty Name="ThemeTypeID" ColumnName="ThemeTypeID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ThemeType">
+            <EntityTypeMapping TypeName="ChatModel.ThemeType">
+              <MappingFragment StoreEntitySet="ThemeType">
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1122,6 +1037,40 @@
                 <ScalarProperty Name="PassWord" ColumnName="PassWord" />
                 <ScalarProperty Name="NickeName" ColumnName="NickeName" />
                 <ScalarProperty Name="LoginID" ColumnName="LoginID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserPay">
+            <EntityTypeMapping TypeName="ChatModel.UserPay">
+              <MappingFragment StoreEntitySet="UserPay">
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="PayTime" ColumnName="PayTime" />
+                <ScalarProperty Name="PayMoney" ColumnName="PayMoney" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AgentPower">
+            <EntityTypeMapping TypeName="ChatModel.AgentPower">
+              <MappingFragment StoreEntitySet="AgentPower">
+                <ScalarProperty Name="BChildChildRecvMoney" ColumnName="BChildChildRecvMoney" />
+                <ScalarProperty Name="BChildChildMoney" ColumnName="BChildChildMoney" />
+                <ScalarProperty Name="BChildChild" ColumnName="BChildChild" />
+                <ScalarProperty Name="BRecvMoney" ColumnName="BRecvMoney" />
+                <ScalarProperty Name="BChildMoney" ColumnName="BChildMoney" />
+                <ScalarProperty Name="BChild" ColumnName="BChild" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UID">
+            <EntityTypeMapping TypeName="ChatModel.UID">
+              <MappingFragment StoreEntitySet="UID">
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="UDID" ColumnName="UDID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
