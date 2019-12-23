@@ -53,8 +53,8 @@
     <Compile Include="AgentPowerDAL.cs" />
     <Compile Include="FriendGroupsDAL.cs" />
     <Compile Include="InvitationDAL.cs" />
+    <Compile Include="LogoDAL.cs" />
     <Compile Include="MessagesDAL.cs" />
-    <Compile Include="RoleDAL.cs" />
     <Compile Include="ThemeDAL.cs" />
     <Compile Include="UserDAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

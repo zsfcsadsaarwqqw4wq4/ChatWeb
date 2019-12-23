@@ -37,5 +37,14 @@ namespace BLL
         {
            return ad.GetAgentModel(userid);
         }
+        /// <summary>
+        /// 获取当前登录用户的父级id
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public int QueryParentAgent(int uid)
+        {
+            return ad.QueryParentAgent(uid);
+        }
     }
 }

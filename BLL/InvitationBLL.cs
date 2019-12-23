@@ -54,6 +54,6 @@ namespace BLL
         public int GetUserInvitation(int userid)
         {
             return ivd.GetUserInvitation(userid);
-        }
+        } 
     }
 }

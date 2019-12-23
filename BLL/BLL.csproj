@@ -42,10 +42,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AgentBLL.cs" />
+    <Compile Include="AgentPowerBLL.cs" />
     <Compile Include="FriendGroupsBLL.cs" />
     <Compile Include="InvitationBLL.cs" />
+    <Compile Include="LogoBLL.cs" />
     <Compile Include="MessagesBLL.cs" />
-    <Compile Include="RoleBLL.cs" />
     <Compile Include="ThemeBLL.cs" />
     <Compile Include="UserBLL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

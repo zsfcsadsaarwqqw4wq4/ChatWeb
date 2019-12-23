@@ -139,12 +139,6 @@
     <Compile Include="Reply.cs">
       <DependentUpon>ChatModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Role.cs">
-      <DependentUpon>ChatModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Role_Agent.cs">
-      <DependentUpon>ChatModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="State.cs">
       <DependentUpon>ChatModel.tt</DependentUpon>
     </Compile>
@@ -154,13 +148,13 @@
     <Compile Include="ThemeType.cs">
       <DependentUpon>ChatModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="UID.cs">
+      <DependentUpon>ChatModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="User.cs">
       <DependentUpon>ChatModel.tt</DependentUpon>
     </Compile>
     <Compile Include="UserPay.cs">
-      <DependentUpon>ChatModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="User_Role.cs">
       <DependentUpon>ChatModel.tt</DependentUpon>
     </Compile>
   </ItemGroup>

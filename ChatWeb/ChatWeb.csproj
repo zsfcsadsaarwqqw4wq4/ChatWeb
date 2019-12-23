@@ -54,11 +54,17 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="FluentScheduler, Version=5.3.0.0, Culture=neutral, PublicKeyToken=b76503528a14ebd1, processorArchitecture=MSIL">
+      <HintPath>..\packages\FluentScheduler.5.3.0\lib\net40\FluentScheduler.dll</HintPath>
+    </Reference>
     <Reference Include="GetuiServerApiSDK">
       <HintPath>..\..\..\头像图片\GETUI_CSharp_Net_Framework_SDK_4.1.0.0\GETUI_C#_SDK_4_1_0_0\GETUI_C#_SDK\GETUI_C#_SDK\CSharpDemo\protobuffer\GetuiServerApiSDK.dll</HintPath>
     </Reference>
     <Reference Include="Google.ProtocolBuffers">
       <HintPath>..\..\..\头像图片\GETUI_CSharp_Net_Framework_SDK_4.1.0.0\GETUI_C#_SDK_4_1_0_0\GETUI_C#_SDK\GETUI_C#_SDK\CSharpDemo\protobuffer\Google.ProtocolBuffers.dll</HintPath>
+    </Reference>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.2.0.246, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpZipLib.1.2.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Jiguang.JPush, Version=1.2.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -204,6 +210,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\JPush.cs" />
+    <Compile Include="App_Start\MyRegistry .cs" />
     <Compile Include="App_Start\Redis.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startupcs.cs" />
@@ -216,12 +223,16 @@
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\FriendGroupsController.cs" />
     <Compile Include="Controllers\FriendsController.cs" />
+    <Compile Include="Controllers\LogoController.cs" />
     <Compile Include="Controllers\MsgController.cs" />
     <Compile Include="Controllers\ThemeController.cs" />
     <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Main.ashx.cs">
+      <DependentUpon>Main.ashx</DependentUpon>
     </Compile>
     <Compile Include="Models.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -359,6 +370,36 @@
     <Content Include="Images\head\7.jpg" />
     <Content Include="Images\head\8.jpg" />
     <Content Include="Images\head\9.jpg" />
+    <Content Include="Images\Icon\BaiduIcon\icon100.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon114.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon120.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon144.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon152.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon180.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon29.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon40.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon50.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon57.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon58.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon72.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon76.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon80.png" />
+    <Content Include="Images\Icon\BaiduIcon\icon87.png" />
+    <Content Include="Images\Icon\WordIcon\icon100.png" />
+    <Content Include="Images\Icon\WordIcon\icon114.png" />
+    <Content Include="Images\Icon\WordIcon\icon120.png" />
+    <Content Include="Images\Icon\WordIcon\icon144.png" />
+    <Content Include="Images\Icon\WordIcon\icon152.png" />
+    <Content Include="Images\Icon\WordIcon\icon180.png" />
+    <Content Include="Images\Icon\WordIcon\icon29.png" />
+    <Content Include="Images\Icon\WordIcon\icon40.png" />
+    <Content Include="Images\Icon\WordIcon\icon50.png" />
+    <Content Include="Images\Icon\WordIcon\icon57.png" />
+    <Content Include="Images\Icon\WordIcon\icon58.png" />
+    <Content Include="Images\Icon\WordIcon\icon72.png" />
+    <Content Include="Images\Icon\WordIcon\icon76.png" />
+    <Content Include="Images\Icon\WordIcon\icon80.png" />
+    <Content Include="Images\Icon\WordIcon\icon87.png" />
     <Content Include="Images\Theme\1.jpg" />
     <Content Include="Images\Theme\2.jpg" />
     <Content Include="Images\Theme\3.jpg" />
@@ -388,6 +429,7 @@
     <Content Include="assets\js\recordFlash\README.md" />
     <Content Include="assets\js\recordFlash\VERSION" />
     <Content Include="Chat.ashx" />
+    <Content Include="Main.ashx" />
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
@@ -442,6 +484,7 @@
     <Folder Include="Views\Base\" />
     <Folder Include="Views\FriendGroups\" />
     <Folder Include="Views\Friends\" />
+    <Folder Include="Views\Logo\" />
     <Folder Include="Views\Msg\" />
     <Folder Include="Views\Theme\" />
   </ItemGroup>

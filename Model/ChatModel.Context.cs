@@ -25,13 +25,14 @@ namespace Model
             throw new UnintentionalCodeFirstException();
         }
     
+        public virtual DbSet<Agent> Agent { get; set; }
         public virtual DbSet<AgentMoney> AgentMoney { get; set; }
         public virtual DbSet<AgentPercent> AgentPercent { get; set; }
         public virtual DbSet<AgentPerModel> AgentPerModel { get; set; }
-        public virtual DbSet<AgentPower> AgentPower { get; set; }
         public virtual DbSet<ChatLevel> ChatLevel { get; set; }
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<FriendGroups> FriendGroups { get; set; }
+        public virtual DbSet<Friends> Friends { get; set; }
         public virtual DbSet<FriendshipPolicy> FriendshipPolicy { get; set; }
         public virtual DbSet<FriendType> FriendType { get; set; }
         public virtual DbSet<Groups> Groups { get; set; }
@@ -39,23 +40,20 @@ namespace Model
         public virtual DbSet<GroupsMSGToUser> GroupsMSGToUser { get; set; }
         public virtual DbSet<GroupsMSGUserToUser> GroupsMSGUserToUser { get; set; }
         public virtual DbSet<GroupsToUser> GroupsToUser { get; set; }
+        public virtual DbSet<Invitation> Invitation { get; set; }
         public virtual DbSet<Logo> Logo { get; set; }
+        public virtual DbSet<Messages> Messages { get; set; }
         public virtual DbSet<MessagesStillType> MessagesStillType { get; set; }
         public virtual DbSet<MessagesType> MessagesType { get; set; }
         public virtual DbSet<Nation> Nation { get; set; }
         public virtual DbSet<Province> Province { get; set; }
-        public virtual DbSet<Role> Role { get; set; }
-        public virtual DbSet<Role_Agent> Role_Agent { get; set; }
-        public virtual DbSet<State> State { get; set; }
-        public virtual DbSet<User_Role> User_Role { get; set; }
-        public virtual DbSet<UserPay> UserPay { get; set; }
-        public virtual DbSet<Invitation> Invitation { get; set; }
         public virtual DbSet<Reply> Reply { get; set; }
-        public virtual DbSet<ThemeType> ThemeType { get; set; }
+        public virtual DbSet<State> State { get; set; }
         public virtual DbSet<Theme> Theme { get; set; }
-        public virtual DbSet<Friends> Friends { get; set; }
-        public virtual DbSet<Messages> Messages { get; set; }
-        public virtual DbSet<Agent> Agent { get; set; }
+        public virtual DbSet<ThemeType> ThemeType { get; set; }
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<UserPay> UserPay { get; set; }
+        public virtual DbSet<AgentPower> AgentPower { get; set; }
+        public virtual DbSet<UID> UID { get; set; }
     }
 }
