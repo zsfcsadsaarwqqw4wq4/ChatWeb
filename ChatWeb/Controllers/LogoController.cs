@@ -48,7 +48,6 @@ namespace ChatWeb.Controllers
             using (StreamReader stream = new StreamReader(Request.InputStream))
             {
                 string json = stream.ReadToEnd();
-                
             }
         }
     }

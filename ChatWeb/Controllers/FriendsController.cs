@@ -190,7 +190,7 @@ namespace ChatWeb.Controllers
                 resultData.data = userlist;
             }
             return Json(resultData);
-        }       
+        }     
         /// <summary>
         /// 提交好友申请
         /// </summary>

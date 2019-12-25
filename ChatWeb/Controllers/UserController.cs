@@ -15,6 +15,7 @@ namespace ChatWeb.Controllers
 {
     public class UserController : Controller
     {
+        Redis redis = new Redis();
         public class ResultUser
         {
             public ResultUser()
@@ -55,7 +56,6 @@ namespace ChatWeb.Controllers
         [HttpPost]
         public JsonResult Login()
         {
-            Redis redis=new Redis();
             ResultUser resultUser = new ResultUser();
             UserBLL ub=new UserBLL();
             InvitationBLL ib=new InvitationBLL();
@@ -87,6 +87,7 @@ namespace ChatWeb.Controllers
                 else
                 {
                     var result=redis.StringGet(user.LoginID);
+                    redis.SetString(user.ID.ToString(), user.HeadPortrait);
                     if (result!=null)
                     {
                         resultUser.msg = "该用户已经登录了";

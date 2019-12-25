@@ -18,5 +18,14 @@ namespace BLL
         {
             apd.GetAgentPower(uid);
         }
+        /// <summary>
+        /// 判断当前用户是否拥有设置下线分红的权限
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public bool AddAgentPower(int uid)
+        {
+           return apd.AddAgentPower(uid);
+        }            
     }
 }

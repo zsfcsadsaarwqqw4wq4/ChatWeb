@@ -24,7 +24,7 @@ namespace ChatWeb.Controllers
             int res= ab.QueryParentAgent(uid);
             if (res!=0)
             {
-
+                
             }
             else
             {

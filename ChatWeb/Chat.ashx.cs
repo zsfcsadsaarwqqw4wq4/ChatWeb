@@ -195,8 +195,7 @@ namespace ChatWeb
             {
                 DateTime time = DateTime.Now;
                 Redis redis=new Redis();
-                var result= redis.StringGet(loginid);
-                var headimg=result["HeadPortrait"];
+                var result= redis.GetString(userid.ToString());
                 var temp = new
                 {
                     userid = userid,
@@ -204,7 +203,7 @@ namespace ChatWeb
                     msg = msg,
                     loginid = loginid,
                     uid = uid,
-                    userheadportrait=headimg,
+                    userheadportrait=Constant.files+ result,
                     guid=guid,
                     messagestypeid = EnumHelper.Message.four,
                     isBART = isBART
@@ -323,7 +322,7 @@ namespace ChatWeb
         /// <param name="loginid">当前用户用户名</param>
         /// <param name="uid">接收者用户id</param>
         /// <param name="img">图片链接</param>
-        public static void SendPhotoToUser(int userid, string loginid, int uid, string img,int messagestypeid)
+        public static void SendPhotoToUser(int userid, string loginid, int uid, string img,int messagestypeid,string guid)
         {
             //发送成功，返回给所有目标用户
             CONNECT_TMP_POOL = new Dictionary<int, WebSocket>(CONNECT_POOL);
@@ -340,7 +339,8 @@ namespace ChatWeb
                         img = img,
                         loginid = loginid,
                         uid = uid,
-                        messagestypeid= messagestypeid
+                        guid=guid,
+                        messagestypeid = messagestypeid
                     };
                     string data = JsonConvert.SerializeObject(temp);
                     byte[] bytes = Encoding.UTF8.GetBytes(data);
@@ -348,7 +348,34 @@ namespace ChatWeb
                     destSocket.SendAsync(buffer, WebSocketMessageType.Text, true, new CancellationToken());
                 }
             }
-            catch { }
+            catch {
+                DateTime time = DateTime.Now;
+                Redis redis = new Redis();
+                var result = redis.GetString(userid.ToString());
+                var temp = new
+                {
+                    userid = userid,
+                    time = time,
+                    img = img,
+                    loginid = loginid,
+                    userheadportrait = Constant.files + result,
+                    uid = uid,
+                    guid = guid,
+                    messagestypeid = messagestypeid
+                };
+                string data = JsonConvert.SerializeObject(temp);
+                byte[] bytes = Encoding.UTF8.GetBytes(data);
+                ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
+                try
+                {
+                    MESSAGE_POOL.Add(uid, new List<MessageInfo>());
+                    MESSAGE_POOL[uid].Add(new MessageInfo(buffer));
+                }
+                catch
+                {
+                    MESSAGE_POOL[uid].Add(new MessageInfo(buffer));//添加离线消息
+                }
+            }
         }
         /// <summary>
         /// 发送图片个指定用户
@@ -357,7 +384,7 @@ namespace ChatWeb
         /// <param name="loginid">当前用户用户名</param>
         /// <param name="uid">接收者用户id</param>
         /// <param name="img">图片链接</param>
-        public static void SendPhotoToUsers(int userid, string loginid, int uid, Byte[] img, int messagestypeid)
+        public static void SendPhotoToUsers(int userid, string loginid, int uid, string img, int messagestypeid,string guid,string ext)
         {
             //发送成功，返回给所有目标用户
             CONNECT_TMP_POOL = new Dictionary<int, WebSocket>(CONNECT_POOL);
@@ -374,6 +401,8 @@ namespace ChatWeb
                         img = img,
                         loginid = loginid,
                         uid = uid,
+                        guid=guid,
+                        ext=ext,
                         messagestypeid = messagestypeid
                     };
                     string data = JsonConvert.SerializeObject(temp);
