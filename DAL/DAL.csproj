@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AgentMoneyDAL.cs" />
     <Compile Include="AgentDAL.cs" />
     <Compile Include="AgentPercentDAL.cs" />
     <Compile Include="AgentPowerDAL.cs" />

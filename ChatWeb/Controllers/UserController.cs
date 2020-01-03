@@ -86,6 +86,15 @@ namespace ChatWeb.Controllers
                 }
                 else
                 {
+                    bool value = false;
+                    if (string.IsNullOrEmpty(user.PassWords))
+                    {
+                        user.PassWords = "1111";
+                        if (ub.UpdatePassword(user))
+                        {
+                            value = true;
+                        }                       
+                    }
                     var result=redis.StringGet(user.LoginID);
                     redis.SetString(user.ID.ToString(), user.HeadPortrait);
                     if (result!=null)
@@ -95,6 +104,15 @@ namespace ChatWeb.Controllers
                     }
                     else if (password.Equals(user.PassWord))
                     {
+                        if (value)
+                        {
+                            resultUser.res = 205;
+                            resultUser.state = 1;
+                            resultUser.msg = "由于您未设置迷惑密码系统帮您设置了迷惑密码为1111";
+                            resultUser.data = JwtHelper.CreateToken(user);
+                            //用redis保存用户登录的信息
+                            redis.StringSet(user.LoginID, user);
+                        }
                         resultUser.res = 200;
                         resultUser.state = 1;
                         resultUser.msg = "用户是登录的私密聊天";
@@ -111,7 +129,9 @@ namespace ChatWeb.Controllers
                     }
                     else
                     {
+                        resultUser.res = 500;
                         resultUser.msg = "密码错误，请重新输入";
+
                     };
                 }
             }
@@ -143,7 +163,7 @@ namespace ChatWeb.Controllers
                     }
                     obj = JObject.Parse(json);
                 }
-                string loginid=obj["loginid"].ToString();                
+                string loginid=obj["loginid"].ToString();
                 bool msg = ub.GetUserIsRegister(loginid);
                 if(msg)
                 {
@@ -182,7 +202,8 @@ namespace ChatWeb.Controllers
                     user.IsEnterSendMsg = false;    
                     user.ChatTimeLimit = "0";
                     user.Shape = 1;
-                    user.ChatSwitch = true;                    
+                    user.ChatSwitch = false;
+
                     if (ub.CreateUser(user))
                     {
                         resultUser.res = 200;

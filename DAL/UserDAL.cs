@@ -303,5 +303,17 @@ namespace DAL
                 return userlist;
             }
         }
+        /// <summary>
+        /// 如果没有迷惑密码，默认1111
+        /// </summary>
+        public bool UpdatePassword(User user)
+        {
+            using (ChatEntities db = new ChatEntities())
+            {
+                User us = db.User.SingleOrDefault(u => u.ID == user.ID);
+                us.PassWords = user.PassWords;
+                return db.SaveChanges() > 0;
+            }
+        }
     }
 }

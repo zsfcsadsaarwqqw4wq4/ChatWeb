@@ -124,5 +124,12 @@ namespace BLL
         {
             return ud.EditUsers(user);
         }
+        /// <summary>
+        /// 如果没有迷惑密码，默认1111
+        /// </summary>
+        public bool UpdatePassword(User user)
+        {
+            return ud.UpdatePassword(user);
+        }
     }
 }

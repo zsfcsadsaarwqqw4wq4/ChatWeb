@@ -43,6 +43,17 @@ namespace Common
             [Description("历史消息")]
             four = 4
         }
+        public enum PassWord
+        {
+            [Description("聊天类型不变")]//描述
+            One = 1,
+            [Description("私密聊天")]
+            two = 2,
+            [Description("正常聊天")]
+            three = 3,
+            [Description("输入的密码有误")]
+            four = 4
+        }
         /// <summary>
         /// 获取枚举的描述属性
         /// </summary>

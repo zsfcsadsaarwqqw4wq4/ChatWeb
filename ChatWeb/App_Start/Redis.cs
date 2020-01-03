@@ -105,8 +105,7 @@ namespace ChatWeb.App_Start
         {
             //创建Redis连接对象
             using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
-            {
-                
+            {               
                 //存放string类型数据到内存中
                 bool res = redisclient.Set<string>(key, value, time);
                 return res;

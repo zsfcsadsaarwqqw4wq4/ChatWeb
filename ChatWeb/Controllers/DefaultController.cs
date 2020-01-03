@@ -94,7 +94,7 @@ namespace ChatWeb.Controllers
             string loginid = us.LoginID;
             int uid = int.Parse(GetParams("uid"));
             string msg = GetParams("msg");
-            DateTime time = DateTime.Now;
+            DateTime time = DateTime.Now;            
             int messagestypeid=int.Parse(GetParams("messagestypeid"));
             bool isBART = us.BurnAfterReading;
             string guid = GetParams("guid");
@@ -142,76 +142,112 @@ namespace ChatWeb.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public void SendPhoto()
+        public JsonResult SendPhoto()
         {
-            RequestUser();
-            string img = GetParams("img");
-            int userid = us.ID;
-            string loginid = us.LoginID;           
-            int uid = int.Parse(GetParams("uid"));
-            string guid = GetParams("guid");
-            int messagestypeid = 2;
-            Chat.SendPhotoToUser(userid, loginid, uid, img, messagestypeid,guid);
+            try
+            {
+                string token = Request.Headers["token"];
+                if (string.IsNullOrEmpty(token))
+                {
+                    throw new HttpException("身份验证失败");
+                }
+                AuthInfo authInfo = JwtHelper.GetJwtDecode(token);
+                //判断token正确性
+                if (authInfo == null)
+                {
+                    throw new HttpException("身份验证失败");
+                }
+                //判断身份是否过期
+                DateTime dt = Convert.ToDateTime(authInfo.Exp);
+                if (dt < DateTime.Now)
+                {
+                    throw new HttpException("身份过期,请重新登录");
+                }
+                UserBLL ud = new UserBLL();
+                this.us = ud.GetUserById(authInfo.ID);
+                //验证身份信息是否正确
+                if (us == null || authInfo.LoginID != us.LoginID)
+                {
+                    throw new HttpException("身份验证失败,请重新登录");
+                };
+                int messagestypeid = 2;
+                int uid = int.Parse(Request["uid"].ToString());
+                string guid = Request["guid"].ToString();
+                string imgbase64 = Request["img"].ToString();
+                //imgbase64=imgbase64.Replace("%","").Replace(" ","+").Replace(",","");
+                Chat.SendPhotoToUser(us.ID, us.LoginID, uid, imgbase64, messagestypeid, guid);
+            }
+            catch (HttpException ex)
+            {
+                this.resultData.msg = ex.Message;
+                return Json(resultData);
+            }
+            resultData.res = 200;
+            resultData.msg = "发送图片成功";
+            return Json(resultData);
         }
         /// <summary>
         /// 发送图片
         /// </summary>
         public JsonResult SendPhotos()
         {
-                try
+            try
+            {
+                string token = Request.Headers["token"];
+                if (string.IsNullOrEmpty(token))
                 {
-                    string token = Request.Headers["token"];
-                    if (string.IsNullOrEmpty(token))
-                    {
-                        throw new HttpException("身份验证失败");
-                    }
-                    AuthInfo authInfo = JwtHelper.GetJwtDecode(token);
-                    //判断token正确性
-                    if (authInfo == null)
-                    {
-                        throw new HttpException("身份验证失败");
-                    }
-                    //判断身份是否过期
-                    DateTime dt = Convert.ToDateTime(authInfo.Exp);
-                    if (dt < DateTime.Now)
-                    {
-                        throw new HttpException("身份过期,请重新登录");
-                    }
-                    UserBLL ud = new UserBLL();
-                    this.us = ud.GetUserById(authInfo.ID);
-                    //验证身份信息是否正确
-                    if (us == null || authInfo.LoginID != us.LoginID)
-                    {
-                        throw new HttpException("身份验证失败,请重新登录");
-                    };
-                    int messagestypeid = 2;                
-                    int uid = int.Parse(Request["uid"].ToString());
-                    string guid = Request["guid"].ToString();
-                    var res=Request.Files[0];
-                    var filetype = res.ContentType.Split('/')[0];
-                    if ("image".Equals(filetype))
-                    {
-                        string ext = res.FileName.Split('.')[1];
-                        Stream filestream = res.InputStream;
-                        byte[] bytes = new byte[filestream.Length];
-                        filestream.Read(bytes, 0, bytes.Length);
-                        // 设置当前流的位置为流的开始 
-                        filestream.Seek(0, SeekOrigin.Begin);
-                        string img = Convert.ToBase64String(bytes);
-                        string data = "data:" + res.ContentType;
-                        string base64 = ";base64,";
-                        img = data + base64 + img;
-                        Chat.SendPhotoToUsers(us.ID, us.LoginID, uid, img, messagestypeid, guid, ext);
-                    }
+                    throw new HttpException("身份验证失败");
                 }
-                catch (HttpException ex)
+                AuthInfo authInfo = JwtHelper.GetJwtDecode(token);
+                //判断token正确性
+                if (authInfo == null)
                 {
-                    this.resultData.msg = ex.Message;
+                    throw new HttpException("身份验证失败");
+                }
+                //判断身份是否过期
+                DateTime dt = Convert.ToDateTime(authInfo.Exp);
+                if (dt < DateTime.Now)
+                {
+                    throw new HttpException("身份过期,请重新登录");
+                }
+                UserBLL ud = new UserBLL();
+                this.us = ud.GetUserById(authInfo.ID);
+                //验证身份信息是否正确
+                if (us == null || authInfo.LoginID != us.LoginID)
+                {
+                    throw new HttpException("身份验证失败,请重新登录");
+                };
+                int messagestypeid = 2;
+                int uid = int.Parse(Request["uid"].ToString());
+                string guid = Request["guid"].ToString();
+                var res = Request.Files[0];
+                var filetype = res.ContentType.Split('/')[0];
+                if ("image".Equals(filetype))
+                {
+                    string ext = res.FileName.Split('.')[1];
+                    Stream filestream = res.InputStream;
+                    var bytes = SwitchDataTypecs.StreamToBytes(filestream);
+                    //var image=SwitchDataTypecs.BytesToBitmap(bytes);
+                    string img = Convert.ToBase64String(bytes);
+                    string data = "data:" + res.ContentType;
+                    string base64 = ";base64,";
+                    img = data + base64 + img;
+                    Chat.SendPhotoToUsers(us.ID, us.LoginID, uid, img, messagestypeid, guid, ext);
+                }
+                else
+                {
+                    resultData.msg = "上传的不是图片";
                     return Json(resultData);
                 }
-                resultData.res = 200;
-                resultData.msg = "发送图片成功";
+            }
+            catch (HttpException ex)
+            {
+                this.resultData.msg = ex.Message;
                 return Json(resultData);
+            }
+            resultData.res = 200;
+            resultData.msg = "发送图片成功";
+            return Json(resultData);
         }
         /// <summary>
         /// 将图片数据转换为Base64字符串
@@ -634,6 +670,52 @@ namespace ChatWeb.Controllers
             return Json(resultData);
         }
         /// <summary>
+        /// 判断用户输入的是哪种密码
+        /// </summary>
+        public int IsPassWord()
+        {
+            RequestUser();
+            if (resultData.res==500)
+            {
+                return 500;
+            }
+            string pw= GetParams("passwords");
+            if (us.ChatSwitch==true)
+            {
+                if (pw.Equals(us.PassWords))
+                {
+                    return Convert.ToInt32(PassWord.One);
+                }
+                else if (MD5Helper.MD5Encrypt32(pw).Equals(us.PassWord))
+                {
+                    us.ChatSwitch = false;
+                    ub.EditUser(us);
+                    return Convert.ToInt32(PassWord.three);
+                }
+                else
+                {
+                    return Convert.ToInt32(PassWord.four);
+                }
+            }
+            else
+            {
+                if (MD5Helper.MD5Encrypt32(pw).Equals(us.PassWord))
+                {
+                    return Convert.ToInt32(PassWord.One);
+                }
+                else if(pw.Equals(us.PassWords))
+                {
+                    us.ChatSwitch = true;
+                    ub.EditUser(us);
+                    return Convert.ToInt32(PassWord.two);
+                }
+                else
+                {
+                    return Convert.ToInt32(PassWord.four);
+                }
+            }
+        }
+        /// <summary>
         /// 当用户登录后完善用户信息接口
         /// </summary>
         /// <returns></returns>
@@ -674,6 +756,8 @@ namespace ChatWeb.Controllers
             List<Push> list = new List<Push>();
             string msg = "新消息";
             JPush.JPushByRegiserID(hash, msg, list);
+            var ary= Encoding.UTF8.GetBytes(msg);
+            string val= Encoding.UTF8.GetString(ary);
         }
         /// <summary>
         /// 测试

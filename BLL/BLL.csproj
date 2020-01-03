@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AgentBLL.cs" />
+    <Compile Include="AgentPercentBLL.cs" />
     <Compile Include="AgentPowerBLL.cs" />
     <Compile Include="FriendGroupsBLL.cs" />
     <Compile Include="InvitationBLL.cs" />
