@@ -173,7 +173,7 @@ namespace ChatWeb.Controllers
                 int messagestypeid = 2;
                 int uid = int.Parse(Request["uid"].ToString());
                 string guid = Request["guid"].ToString();
-                string imgbase64 = Request["img"].ToString();
+                string imgbase64 = Request["img"].ToString();            
                 //imgbase64=imgbase64.Replace("%","").Replace(" ","+").Replace(",","");
                 Chat.SendPhotoToUser(us.ID, us.LoginID, uid, imgbase64, messagestypeid, guid);
             }
@@ -306,6 +306,7 @@ namespace ChatWeb.Controllers
                 return Json(resultData);
             }
             string passwords = GetParams("cpwd");
+            passwords = MD5Helper.MD5Encrypt32(passwords);
             List<Dictionary<string, string>> list = new List<Dictionary<string, string>>();
             list = JsonConvert.DeserializeObject<List<Dictionary<string, string>>>(GetParams("ques"));
             if (!string.IsNullOrWhiteSpace(list[0].Keys.First()) || !string.IsNullOrWhiteSpace(list[0].Values.First()) || !string.IsNullOrWhiteSpace(list[1].Keys.First()) || !string.IsNullOrWhiteSpace(list[1].Values.First()))
@@ -682,7 +683,7 @@ namespace ChatWeb.Controllers
             string pw= GetParams("passwords");
             if (us.ChatSwitch==true)
             {
-                if (pw.Equals(us.PassWords))
+                if (MD5Helper.MD5Encrypt32(pw).Equals(us.PassWords.ToUpper()))
                 {
                     return Convert.ToInt32(PassWord.One);
                 }
@@ -703,7 +704,7 @@ namespace ChatWeb.Controllers
                 {
                     return Convert.ToInt32(PassWord.One);
                 }
-                else if(pw.Equals(us.PassWords))
+                else if(MD5Helper.MD5Encrypt32(pw).Equals(us.PassWords.ToUpper()))
                 {
                     us.ChatSwitch = true;
                     ub.EditUser(us);

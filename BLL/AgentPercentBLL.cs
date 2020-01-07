@@ -15,5 +15,6 @@ namespace BLL
         {
             return apd.GetPercent(uid);
         }
+        
     }
 }

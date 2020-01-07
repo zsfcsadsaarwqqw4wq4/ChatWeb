@@ -349,6 +349,7 @@ namespace ChatWeb
                 }
             }
             catch {
+
                 DateTime time = DateTime.Now;
                 Redis redis = new Redis();
                 var result = redis.GetString(userid.ToString());

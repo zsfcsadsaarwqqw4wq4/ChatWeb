@@ -89,7 +89,7 @@ namespace ChatWeb.Controllers
                     bool value = false;
                     if (string.IsNullOrEmpty(user.PassWords))
                     {
-                        user.PassWords = "1111";
+                        user.PassWords = MD5Helper.MD5Encrypt32("1111");
                         if (ub.UpdatePassword(user))
                         {
                             value = true;
@@ -203,7 +203,6 @@ namespace ChatWeb.Controllers
                     user.ChatTimeLimit = "0";
                     user.Shape = 1;
                     user.ChatSwitch = false;
-
                     if (ub.CreateUser(user))
                     {
                         resultUser.res = 200;

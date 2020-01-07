@@ -43,7 +43,7 @@ namespace ChatWeb.Controllers
                 resultdata.data = agent;
             }
             return Json(resultdata);
-        }             
+        }   
         /// <summary>
         /// 设置用户代理信息
         /// </summary>

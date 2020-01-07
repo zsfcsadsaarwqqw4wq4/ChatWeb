@@ -77,7 +77,7 @@ namespace ChatWeb.Controllers
             return Json(resultData);
         }
         /// <summary>
-        /// 获取前端传过来的值
+        /// 获取httprequest的值
         /// </summary>
         /// <param name="key">参数名</param>
         /// <returns>参数值，如果不存在返回空字符串</returns>

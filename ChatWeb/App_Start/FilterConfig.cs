@@ -9,5 +9,6 @@ namespace ChatWeb
         {
             filters.Add(new HandleErrorAttribute());
         }
+
     }
 }
