@@ -131,5 +131,13 @@ namespace BLL
         {
             return ud.UpdatePassword(user);
         }
+        /// <summary>
+        /// 获取用户头像
+        /// </summary>
+        /// <returns></returns>
+        public string GetUserHeadImg(int uid)
+        {
+            return ud.GetUserHeadImg(uid);
+        }
     }
 }

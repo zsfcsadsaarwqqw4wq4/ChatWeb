@@ -78,6 +78,12 @@ namespace ChatWeb.Controllers
                 {
                     LoginID = obj["loginid"].ToString()
                 };
+                string token = obj["token"].ToString();
+                if (string.IsNullOrEmpty(token))
+                {
+                    resultUser.msg = "登录失败";
+                    return Json(resultUser);
+                }
                 user = ub.GetUser(user);
                 if (user==null)
                 {
@@ -96,7 +102,6 @@ namespace ChatWeb.Controllers
                         }                       
                     }
                     var result=redis.StringGet(user.LoginID);
-                    redis.SetString(user.ID.ToString(), user.HeadPortrait);
                     if (result!=null)
                     {
                         resultUser.msg = "该用户已经登录了";
@@ -113,6 +118,13 @@ namespace ChatWeb.Controllers
                             //用redis保存用户登录的信息
                             redis.StringSet(user.LoginID, user);
                         }
+                        int res = CheckAgent();
+                        var datas = new
+                        {
+                            device = res,
+                            token = token
+                        };
+                        redis.StringSet(user.ID.ToString(), datas);
                         resultUser.res = 200;
                         resultUser.state = 1;
                         resultUser.msg = "用户是登录的私密聊天";
@@ -186,6 +198,12 @@ namespace ChatWeb.Controllers
                     resultUser.msg = "邀请码已过期";
                     return Json(resultUser);
                 }
+                string token = obj["token"].ToString();
+                if (!string.IsNullOrEmpty(token))
+                {
+                    resultUser.msg = "注册失败";
+                    return Json(resultUser);
+                }
                 if (ivs!=null)
                 {
                     Random random = new Random();
@@ -205,6 +223,14 @@ namespace ChatWeb.Controllers
                     user.ChatSwitch = false;
                     if (ub.CreateUser(user))
                     {
+                        var data= ub.GetUserName(loginid);
+                        int res=CheckAgent();
+                        var datas = new
+                        {
+                            device = res,
+                            token=token
+                        };
+                        redis.StringSet(data.ID.ToString(), datas);
                         resultUser.res = 200;
                         resultUser.msg = "注册成功"; 
                         resultUser.data = JwtHelper.CreateToken(user);
@@ -219,7 +245,24 @@ namespace ChatWeb.Controllers
 
             }
             return Json(resultUser);
-        } 
-        
+        }
+        /// <summary>
+        /// 1代表当前登录用户是安卓设备，2代表是苹果设备,0代表既不是苹果也不是安卓
+        /// </summary>
+        /// <returns></returns>
+        public int CheckAgent()
+        {
+            string Agent = Request.UserAgent;
+            string[] keywords = { "Android", "iPhone" };
+            if (Agent.Contains("Android"))
+            {
+                return 1;
+            }
+            if (Agent.Contains("iPhone"))
+            {
+                return 2;
+            }
+            return 0;
+        }
     }
 }

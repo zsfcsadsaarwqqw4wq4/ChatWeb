@@ -21,7 +21,7 @@ namespace ChatWeb
     /// 离线消息类
     /// </summary>
     public class MessageInfo
-    {
+    {        
         public MessageInfo(ArraySegment<byte> _MsgContent)
         {
             MsgContent = _MsgContent;
@@ -164,7 +164,7 @@ namespace ChatWeb
         /// </summary>
         /// <param name="uid">接收者id</param>
         /// <param name="msg">发送的消息</param>
-        public static void SendMsgToUser(int userid, string loginid,int uid, string msg,string guid,int messagestypeid,bool isBART)
+        public static void SendMsgToUser(int userid, string loginid,int uid, string msg,string guid,int messagestypeid,bool isBART,object res)
         {
             //发送成功，返回给所有目标用户
             CONNECT_TMP_POOL = new Dictionary<int, WebSocket>(CONNECT_POOL);
@@ -193,9 +193,21 @@ namespace ChatWeb
             }
             catch(Exception ex)
             {
-                DateTime time = DateTime.Now;
                 Redis redis=new Redis();
-                var result= redis.GetString(userid.ToString());
+                var datas=redis.StringGet(uid.ToString());
+                string token = datas["token"].ToString();
+                string device = datas["device"].ToString();
+                if ("1".Equals(device))
+                {
+
+                };
+                if ("2".Equals(device))
+                {
+                    Push.APNsPushToSingle("", msg, token, res);
+                }
+                DateTime time = DateTime.Now;
+                UserBLL ub =new UserBLL();
+                string result=ub.GetUserHeadImg(userid);
                 var temp = new
                 {
                     userid = userid,
@@ -351,8 +363,8 @@ namespace ChatWeb
             catch {
 
                 DateTime time = DateTime.Now;
-                Redis redis = new Redis();
-                var result = redis.GetString(userid.ToString());
+                UserBLL ub = new UserBLL();
+                string result = ub.GetUserHeadImg(userid);
                 var temp = new
                 {
                     userid = userid,
@@ -384,7 +396,7 @@ namespace ChatWeb
         /// <param name="loginid">当前用户用户名</param>
         /// <param name="uid">接收者用户id</param>
         /// <param name="img">图片链接</param>
-        public static void SendPhotoToUsers(int userid, string loginid, int uid, string img, int messagestypeid,string guid,string ext)
+        public static void SendPhotoToUsers(int userid, string loginid, int uid, string img, int messagestypeid,string guid,string ext,string width,string height)
         {
             //发送成功，返回给所有目标用户
             CONNECT_TMP_POOL = new Dictionary<int, WebSocket>(CONNECT_POOL);
@@ -403,6 +415,8 @@ namespace ChatWeb
                         uid = uid,
                         guid=guid,
                         ext=ext,
+                        width=width,
+                        height = height,
                         messagestypeid = messagestypeid
                     };
                     string data = JsonConvert.SerializeObject(temp);
@@ -413,8 +427,8 @@ namespace ChatWeb
             }
             catch {
                 DateTime time = DateTime.Now;
-                Redis redis = new Redis();
-                var result = redis.GetString(userid.ToString());
+                UserBLL ub = new UserBLL();
+                string result = ub.GetUserHeadImg(userid);
                 var temp = new
                 {
                     userid = userid,
@@ -424,6 +438,8 @@ namespace ChatWeb
                     uid = uid,
                     guid = guid,
                     ext = ext,
+                    width = width,
+                    height = height,
                     messagestypeid = messagestypeid
                 };
                 string data = JsonConvert.SerializeObject(temp);

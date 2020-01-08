@@ -79,6 +79,24 @@ namespace ChatWeb.Controllers
             return Json(resultdata);
         }
         /// <summary>
+        /// 1代表当前登录用户是安卓设备，2代表是苹果设备,0代表既不是苹果也不是安卓
+        /// </summary>
+        /// <returns></returns>
+        public int CheckAgent()
+        {
+            string Agent = Request.UserAgent;
+            string[] keywords = { "Android", "iPhone" };
+            if (Agent.Contains("Android"))
+            {
+                return 1;
+            }
+            if (Agent.Contains("iPhone"))
+            {
+                return 2;
+            }
+            return 0;
+        }
+        /// <summary>
         /// 发送消息
         /// </summary>
         /// <returns></returns>
@@ -114,8 +132,14 @@ namespace ChatWeb.Controllers
             {
                 resultdata.res = 200;
                 resultdata.msg = "发送成功";
-            }        
-            Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART);
+            }
+            var data = new
+            {
+                userid= userid,
+                uid=uid,
+                msg=msg
+            };
+            Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART,data);
             return Json(resultdata);
         }
         /// <summary>
@@ -220,6 +244,8 @@ namespace ChatWeb.Controllers
                 int messagestypeid = 2;
                 int uid = int.Parse(Request["uid"].ToString());
                 string guid = Request["guid"].ToString();
+                string width =Request["width"].ToString();
+                string height = Request["height"].ToString();
                 var res = Request.Files[0];
                 var filetype = res.ContentType.Split('/')[0];
                 if ("image".Equals(filetype))
@@ -232,7 +258,7 @@ namespace ChatWeb.Controllers
                     string data = "data:" + res.ContentType;
                     string base64 = ";base64,";
                     img = data + base64 + img;
-                    Chat.SendPhotoToUsers(us.ID, us.LoginID, uid, img, messagestypeid, guid, ext);
+                    Chat.SendPhotoToUsers(us.ID, us.LoginID, uid, img, messagestypeid, guid, ext, width, height);
                 }
                 else
                 {
@@ -747,6 +773,15 @@ namespace ChatWeb.Controllers
             return Json(new { });
         }
         /// <summary>
+        /// 当用户退出app时，删除账号和设备关联
+        /// </summary>
+        public void RemoveUserIdAndToken()
+        {
+            RequestUser();
+            string ID = us.ID.ToString();
+            redis.DeleteString(ID);
+        }
+        /// <summary>
         /// 测试推送方法
         /// </summary>
         public void Push()
@@ -772,6 +807,46 @@ namespace ChatWeb.Controllers
             users.LoginID = "hehehe";
             users.Name = "小张";
             bool res=redis.StringSet<User>("user", users);
+        }
+        /// <summary>
+        /// base64编码
+        /// </summary>
+        /// <param name="code_type"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public  string EncodeBase64(string code)
+        {
+            string encode = "";
+            byte[] bytes = Encoding.Unicode.GetBytes(code);
+            try
+            {
+                encode = Convert.ToBase64String(bytes);
+            }
+            catch
+            {
+                encode = code;
+            }
+            return encode;
+        }
+        /// <summary>
+        /// base64解码
+        /// </summary>
+        /// <param name="code_type"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public  string DecodeBase64(string code_type, string code)
+        {
+            string decode = "";
+            byte[] bytes = Convert.FromBase64String(code);
+            try
+            {
+                decode = Encoding.GetEncoding(code_type).GetString(bytes);
+            }
+            catch
+            {
+                decode = code;
+            }
+            return decode;
         }
     }
 }

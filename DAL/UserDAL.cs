@@ -304,6 +304,25 @@ namespace DAL
             }
         }
         /// <summary>
+        /// 获取用户头像
+        /// </summary>
+        /// <returns></returns>
+        public string GetUserHeadImg(int uid)
+        {
+            using (ChatEntities db=new ChatEntities())
+            {
+                User us= db.User.SingleOrDefault(o=>o.ID==uid);
+                if (us!=null)
+                {
+                    return us.HeadPortrait;
+                }
+                else
+                {
+                    return null;
+                }           
+            }
+        }
+        /// <summary>
         /// 如果没有迷惑密码，默认1111
         /// </summary>
         public bool UpdatePassword(User user)
