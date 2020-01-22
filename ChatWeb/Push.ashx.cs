@@ -52,13 +52,14 @@ namespace ChatWeb
             ////批量单推
             //singleBatchDemo();
         }
-        private static void PushMessageToSingle()
+        public static void PushMessageToSingle(string content, string data,string cid)
         {
 
             IGtPush push = new IGtPush(HOST, APPKEY, MASTERSECRET);
             //消息模版：TransmissionTemplate:透传模板
-            var template = NotificationTemplateDemo();
+            var template = NotificationTemplateDemo(content, data);
             // 单推消息模型
+
             SingleMessage message = new SingleMessage();
             message.IsOffline = false;                         // 用户当前不在线时，是否离线存储,可选
             message.OfflineExpireTime = 1000 * 3600 * 12;            // 离线有效时间，单位为毫秒，可选
@@ -67,36 +68,30 @@ namespace ChatWeb
             message.PushNetWorkType = 0;
             com.igetui.api.openservice.igetui.Target target = new com.igetui.api.openservice.igetui.Target();
             target.appId = APPID;
-            target.clientId = CLIENTID;
+            target.clientId = cid;
             //target.alias = ALIAS;
             try
             {
-                String pushResult = push.pushMessageToSingle(message, target);
-                System.Console.WriteLine("-----------------------------------------------");
-                System.Console.WriteLine("-----------------------------------------------");
-                System.Console.WriteLine("----------------服务端返回结果：" + pushResult);
+                push.pushMessageToSingle(message, target);
             }
             catch (RequestException e)
             {
                 String requestId = e.RequestId;
                 //发送失败后的重发
-                String pushResult = push.pushMessageToSingle(message, target, requestId);
-                System.Console.WriteLine("-----------------------------------------------");
-                System.Console.WriteLine("-----------------------------------------------");
-                System.Console.WriteLine("----------------服务端返回结果：" + pushResult);
+                push.pushMessageToSingle(message, target, requestId);
             }
         }
 
         //通知透传模板动作内容
-        public static NotificationTemplate NotificationTemplateDemo()
+        public static NotificationTemplate NotificationTemplateDemo(string content,string data)
         {
             NotificationTemplate template = new NotificationTemplate();
             template.AppId = APPID;
             template.AppKey = APPKEY;
             //通知栏标题
-            template.Title = "这是ios消息标题";
+            template.Title = "";
             //通知栏内容     
-            template.Text = "这是ios消息内容";
+            template.Text = content;
             //通知栏显示本地图片
             template.Logo = "";
             //通知栏显示网络图标
@@ -104,7 +99,7 @@ namespace ChatWeb
             //应用启动类型，1：强制应用启动  2：等待应用启动
             template.TransmissionType = 1;
             //透传内容  
-            template.TransmissionContent = "请填写透传内容";
+            template.TransmissionContent = data;
             //接收到消息是否响铃，true：响铃 false：不响铃   
             template.IsRing = true;
             //接收到消息是否震动，true：震动 false：不震动   
@@ -112,9 +107,12 @@ namespace ChatWeb
             //接收到消息是否可清除，true：可清除 false：不可清除    
             template.IsClearable = true;
             //设置通知定时展示时间，结束时间与开始时间相差需大于6分钟，消息推送后，客户端将在指定时间差内展示消息（误差6分钟）
-            String begin = "2020-01-07 14:36:10";
-            String end = "2020-01-08 14:46:20";
-            template.setDuration(begin, end);
+            //string firsttime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            //double time = 10;
+            //string lasttime = DateTime.Now.AddMinutes(time).ToString("yyyy-MM-dd HH:mm:ss");            
+            //String begin = firsttime;
+            //String end = lasttime;
+            //template.setDuration(begin, end);
 
             return template;
         }
@@ -133,11 +131,11 @@ namespace ChatWeb
             alertMsg.TitleLocKey = "";
             alertMsg.addTitleLocArg("");
             apnpayload.AlertMsg = alertMsg;
-            apnpayload.Badge = 1;//应用icon上显示的数字
+            //apnpayload.Badge = 1;//应用icon上显示的数字
             apnpayload.ContentAvailable = 1;//推送直接带有透传数据
             apnpayload.Category = "";
             apnpayload.Sound = "";//通知铃声文件名
-            apnpayload.addCustomMsg("data", data);//增加自定义的数据
+            apnpayload.addCustomMsg("data", data);//增加自定义的数据           
             template.setAPNInfo(apnpayload);
             IGtPush push = new IGtPush(HOST, APPKEY, MASTERSECRET);
             /*单个用户推送接口*/
@@ -146,7 +144,6 @@ namespace ChatWeb
             String pushResult = push.pushAPNMessageToSingle(APPID, token, Singlemessage);
             Console.Out.WriteLine(pushResult);
             return pushResult;
-
         }
         public bool IsReusable
         {

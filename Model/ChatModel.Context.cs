@@ -51,9 +51,9 @@ namespace Model
         public virtual DbSet<State> State { get; set; }
         public virtual DbSet<Theme> Theme { get; set; }
         public virtual DbSet<ThemeType> ThemeType { get; set; }
-        public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserPay> UserPay { get; set; }
         public virtual DbSet<AgentPower> AgentPower { get; set; }
         public virtual DbSet<UID> UID { get; set; }
+        public virtual DbSet<User> User { get; set; }
     }
 }

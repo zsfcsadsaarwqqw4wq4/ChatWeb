@@ -60,9 +60,6 @@ namespace ChatWeb.App_Start
             //创建Redis连接对象
             using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
             {
-                //var jsonSetting=new JsonSerializerSettings(){ NullValueHandling = NullValueHandling.Ignore };
-                //string data=JsonConvert.SerializeObject(value,Formatting.None, jsonSetting);
-                //data=data.Replace("\n", "").Replace(" ", "").Replace("\t", "").Replace("\r", "");
                 //存放string类型数据到内存中
                 bool res = redisclient.Set(key, value);
                 return res;

@@ -46,18 +46,16 @@ namespace ChatWeb.Controllers
                 {
                     throw new HttpException("身份验证失败");
                 }
-                //判断身份是否过期
-                DateTime dt = Convert.ToDateTime(authInfo.Exp);
-                if (dt < DateTime.Now)
-                {
-                    throw new HttpException("身份过期,请重新登录");
-                }
                 UserBLL ud = new UserBLL();
                 this.us = ud.GetUserById(authInfo.ID);
                 //验证身份信息是否正确
                 if (us == null || authInfo.LoginID != us.LoginID )
                 {
                     throw new HttpException("身份验证失败,请重新登录");
+                };
+                if (us.LastLoginAt>authInfo.Iat)
+                {
+                    throw new HttpException("身份验证已过期，请重新登录");
                 };
                 using (StreamReader stream = new StreamReader(Request.InputStream))
                 {

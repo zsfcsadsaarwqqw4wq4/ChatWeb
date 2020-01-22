@@ -139,5 +139,12 @@ namespace BLL
         {
             return ud.GetUserHeadImg(uid);
         }
+        /// <summary>
+        /// 修改用户登陆时间
+        /// </summary>
+        public void UpdateUser(int userid, DateTime time)
+        {
+            ud.UpdateUser(userid, time);
+        }
     }
 }

@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
@@ -26,6 +27,7 @@ namespace ChatWeb.Controllers
         InvitationBLL ib = new InvitationBLL();
         UserBLL ub=new UserBLL();
         ResultData resultdata = new ResultData();
+        ThemeBLL tb = new ThemeBLL();
         User users = new User();
         Redis redis = new Redis();
         /// <summary>
@@ -79,24 +81,6 @@ namespace ChatWeb.Controllers
             return Json(resultdata);
         }
         /// <summary>
-        /// 1代表当前登录用户是安卓设备，2代表是苹果设备,0代表既不是苹果也不是安卓
-        /// </summary>
-        /// <returns></returns>
-        public int CheckAgent()
-        {
-            string Agent = Request.UserAgent;
-            string[] keywords = { "Android", "iPhone" };
-            if (Agent.Contains("Android"))
-            {
-                return 1;
-            }
-            if (Agent.Contains("iPhone"))
-            {
-                return 2;
-            }
-            return 0;
-        }
-        /// <summary>
         /// 发送消息
         /// </summary>
         /// <returns></returns>
@@ -112,13 +96,13 @@ namespace ChatWeb.Controllers
             string loginid = us.LoginID;
             int uid = int.Parse(GetParams("uid"));
             string msg = GetParams("msg");
-            DateTime time = DateTime.Now;            
+            DateTime time = DateTime.Now;             
             int messagestypeid=int.Parse(GetParams("messagestypeid"));
             bool isBART = us.BurnAfterReading;
             string guid = GetParams("guid");
             int status = 0;
             bool recivestatus = true;
-            Messages msgs=new Messages();
+            Messages msgs=new Messages();        
             msgs.FromUserID = userid;
             msgs.ToUserID = uid;
             msgs.Status = status;
@@ -138,8 +122,8 @@ namespace ChatWeb.Controllers
                 userid= userid,
                 uid=uid,
                 msg=msg
-            };
-            Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART,data);
+            };       
+            Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART, data);
             return Json(resultdata);
         }
         /// <summary>
@@ -160,7 +144,6 @@ namespace ChatWeb.Controllers
             Chat.SendMsg(userid, uid, guid, messagestypeid);
             return Json(new { });
         }       
-
         /// <summary>
         /// 发送图片
         /// </summary>
@@ -181,12 +164,6 @@ namespace ChatWeb.Controllers
                 {
                     throw new HttpException("身份验证失败");
                 }
-                //判断身份是否过期
-                DateTime dt = Convert.ToDateTime(authInfo.Exp);
-                if (dt < DateTime.Now)
-                {
-                    throw new HttpException("身份过期,请重新登录");
-                }
                 UserBLL ud = new UserBLL();
                 this.us = ud.GetUserById(authInfo.ID);
                 //验证身份信息是否正确
@@ -197,8 +174,11 @@ namespace ChatWeb.Controllers
                 int messagestypeid = 2;
                 int uid = int.Parse(Request["uid"].ToString());
                 string guid = Request["guid"].ToString();
-                string imgbase64 = Request["img"].ToString();            
-                //imgbase64=imgbase64.Replace("%","").Replace(" ","+").Replace(",","");
+                string imgbase64 = Request["base64"].ToString();
+                if (!string.IsNullOrEmpty(imgbase64))
+                {
+
+                }
                 Chat.SendPhotoToUser(us.ID, us.LoginID, uid, imgbase64, messagestypeid, guid);
             }
             catch (HttpException ex)
@@ -215,6 +195,8 @@ namespace ChatWeb.Controllers
         /// </summary>
         public JsonResult SendPhotos()
         {
+            string OriURL = string.Empty;
+            string CompURL = string.Empty;
             try
             {
                 string token = Request.Headers["token"];
@@ -228,12 +210,6 @@ namespace ChatWeb.Controllers
                 {
                     throw new HttpException("身份验证失败");
                 }
-                //判断身份是否过期
-                DateTime dt = Convert.ToDateTime(authInfo.Exp);
-                if (dt < DateTime.Now)
-                {
-                    throw new HttpException("身份过期,请重新登录");
-                }
                 UserBLL ud = new UserBLL();
                 this.us = ud.GetUserById(authInfo.ID);
                 //验证身份信息是否正确
@@ -241,24 +217,65 @@ namespace ChatWeb.Controllers
                 {
                     throw new HttpException("身份验证失败,请重新登录");
                 };
+                if (us.LastLoginAt>authInfo.Iat)
+                {
+                    throw new HttpException("身份过期,请重新登录");
+                };
                 int messagestypeid = 2;
                 int uid = int.Parse(Request["uid"].ToString());
                 string guid = Request["guid"].ToString();
                 string width =Request["width"].ToString();
                 string height = Request["height"].ToString();
                 var res = Request.Files[0];
+                var time = DateTime.Now.ToFileTime().ToString();
+                try
+                {
+                    var file = Request.Files[0];
+                    var type= file.ContentType.Split('/')[1];
+                    string filepath = Path.Combine(Server.MapPath(string.Format("~/{0}", "Images")), time+ '.'+type);
+                    file.SaveAs(filepath);
+                    OriURL = Constant.files + "/Images/" + time+ '.' + type;
+                    if (file.ContentLength>1024000)
+                    {
+                        Stream imgstream=ImgCompression();
+                        byte[] srcBuf = new byte[imgstream.Length];
+                        imgstream.Read(srcBuf,0, srcBuf.Length);
+                        imgstream.Seek(0, SeekOrigin.Begin);
+                        var times = DateTime.Now.ToFileTime().ToString();
+                        var path= Path.Combine(Server.MapPath(string.Format("~/{0}", "Images")), times+ '.'+type);
+                        using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write))
+                        {
+                            fs.Write(srcBuf, 0, srcBuf.Length);
+                            fs.Close();
+                        };
+                        CompURL = Constant.files + "/Images/" + times + '.' + type;
+                    }
+                    else
+                    {
+                        CompURL = OriURL;
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                   
+                }                
                 var filetype = res.ContentType.Split('/')[0];
                 if ("image".Equals(filetype))
                 {
                     string ext = res.FileName.Split('.')[1];
                     Stream filestream = res.InputStream;
                     var bytes = SwitchDataTypecs.StreamToBytes(filestream);
-                    //var image=SwitchDataTypecs.BytesToBitmap(bytes);
                     string img = Convert.ToBase64String(bytes);
                     string data = "data:" + res.ContentType;
                     string base64 = ";base64,";
                     img = data + base64 + img;
-                    Chat.SendPhotoToUsers(us.ID, us.LoginID, uid, img, messagestypeid, guid, ext, width, height);
+                    var imgURLs = new
+                    {
+                        OriURL= OriURL,
+                        CompURL= CompURL
+                    };
+                    Chat.SendPhotoToUsers(us.ID, us.LoginID, uid, img, messagestypeid, guid, ext, width, height, imgURLs);
                 }
                 else
                 {
@@ -273,6 +290,7 @@ namespace ChatWeb.Controllers
             }
             resultData.res = 200;
             resultData.msg = "发送图片成功";
+            resultData.data = OriURL;
             return Json(resultData);
         }
         /// <summary>
@@ -662,6 +680,7 @@ namespace ChatWeb.Controllers
                 return Json(resultData);
             }
             bool chatswitch=bool.Parse(GetParams("chatswitch"));
+            
             us.ChatSwitch = chatswitch;
             if (!ub.EditUser(us))
             {
@@ -688,6 +707,13 @@ namespace ChatWeb.Controllers
             }
             bool result=redis.DeleteString(us.LoginID);
             if (!result)
+            {
+                resultData.msg = "退出失败";
+                return Json(resultData);
+            }
+            string ID = us.ID.ToString();
+            bool data=redis.DeleteString(ID);
+            if (!data)
             {
                 resultData.msg = "退出失败";
                 return Json(resultData);
@@ -773,15 +799,6 @@ namespace ChatWeb.Controllers
             return Json(new { });
         }
         /// <summary>
-        /// 当用户退出app时，删除账号和设备关联
-        /// </summary>
-        public void RemoveUserIdAndToken()
-        {
-            RequestUser();
-            string ID = us.ID.ToString();
-            redis.DeleteString(ID);
-        }
-        /// <summary>
         /// 测试推送方法
         /// </summary>
         public void Push()
@@ -807,46 +824,78 @@ namespace ChatWeb.Controllers
             users.LoginID = "hehehe";
             users.Name = "小张";
             bool res=redis.StringSet<User>("user", users);
-        }
+        }       
         /// <summary>
-        /// base64编码
+        /// 获取压缩后的文件流 
         /// </summary>
-        /// <param name="code_type"></param>
-        /// <param name="code"></param>
         /// <returns></returns>
-        public  string EncodeBase64(string code)
+        public Stream ImgCompression()
         {
-            string encode = "";
-            byte[] bytes = Encoding.Unicode.GetBytes(code);
-            try
+            var file = Request.Files[0];
+            double compressionRatio = 1024 * 1024 / Convert.ToDouble(file.ContentLength);
+            compressionRatio = Math.Round(compressionRatio, 2);
+            byte[] filebyte = new byte[file.ContentLength];
+            file.InputStream.Read(filebyte, 0, file.ContentLength);
+            //上传文件的byte数组转为Stream
+            MemoryStream ms = new MemoryStream(filebyte);
+            Image img = Image.FromStream(ms);
+            //按比例计算新的宽高
+            int toWidth = Convert.ToInt32(img.Width * compressionRatio);
+            int toHeight = Convert.ToInt32(img.Height * compressionRatio);
+            //按照新的宽高用画布重新画一张
+            Bitmap bitmap = new Bitmap(toWidth, toHeight);
+            Graphics g = Graphics.FromImage(bitmap);
+            g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.High;
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+            g.Clear(System.Drawing.Color.Transparent);
+            g.DrawImage(img, new System.Drawing.Rectangle(0, 0, toWidth, toHeight), new System.Drawing.Rectangle(0, 0, img.Width, img.Height), System.Drawing.GraphicsUnit.Pixel);
+            //将画好的bitmap转成stream（不一定费时stream，byte数组什么都可以）
+            var fileStream = new MemoryStream();
+            using (MemoryStream stream = new MemoryStream())
             {
-                encode = Convert.ToBase64String(bytes);
+                bitmap.Save(stream, ImageFormat.Jpeg);
+                byte[] data = new byte[stream.Length];
+                stream.Seek(0, SeekOrigin.Begin);
+                stream.Read(data, 0, Convert.ToInt32(stream.Length));
+                fileStream = new MemoryStream(data);
             }
-            catch
-            {
-                encode = code;
-            }
-            return encode;
+            return fileStream;
         }
-        /// <summary>
-        /// base64解码
-        /// </summary>
-        /// <param name="code_type"></param>
-        /// <param name="code"></param>
-        /// <returns></returns>
-        public  string DecodeBase64(string code_type, string code)
+        public JsonResult GetAll()
         {
-            string decode = "";
-            byte[] bytes = Convert.FromBase64String(code);
-            try
+            List<string> imgs = new List<string>();
+            for (int i = 9; i < 28; i++)
             {
-                decode = Encoding.GetEncoding(code_type).GetString(bytes);
-            }
-            catch
+                string url = Constant.files + "/Images/head/" + i + ".jpg";
+                imgs.Add(url);
+            };
+            List<IGrouping<int, ThemeModel>> Themes = tb.GetAll();
+            Dictionary<int, List<ThemeModel>> dic = new Dictionary<int, List<ThemeModel>>();
+            List<ThemeModel> listtm = new List<ThemeModel>();
+            foreach (var temp in Themes)
             {
-                decode = code;
+                int key = int.Parse(temp.Key.ToString());
+                listtm = temp.ToList();
+                foreach (var item in listtm)
+                {
+                    item.ThemeImage = Constant.files + item.ThemeImage;
+                }
+                dic.Add(key, listtm);
             }
-            return decode;
+            var temps = new
+            {
+                type = ThemeEnum.System,
+                Name = EnumHelper.GetEnumDescription(ThemeEnum.System),
+                data = dic.ToArray()
+            };
+            List<object> result = new List<object>();
+            result.Add(temps);
+            var datas = new
+            {
+                avatars= imgs,
+                templates= result.ToArray()
+            };
+            return Json(datas,JsonRequestBehavior.AllowGet);
         }
     }
 }

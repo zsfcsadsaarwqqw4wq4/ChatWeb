@@ -123,6 +123,7 @@ namespace DAL
                 us.SecondThemeTypeID = user.SecondThemeTypeID;
                 us.IsEnterSendMsg = user.IsEnterSendMsg;
                 us.ChatSwitch = user.ChatSwitch;
+                us.LastLoginAt=user.LastLoginAt;
                 return db.SaveChanges() > 0;
             }
         }
@@ -142,6 +143,18 @@ namespace DAL
                 us.SecondProblem = user.SecondProblem;
                 us.SecondAnswer = user.SecondAnswer;
                 return db.SaveChanges() > 0;
+            }
+        }
+        /// <summary>
+        /// 修改用户登陆时间
+        /// </summary>
+        public void UpdateUser(int userid,DateTime time)
+        {
+            using (ChatEntities db=new ChatEntities())
+            {
+                User user=db.User.SingleOrDefault(u=>u.ID==userid);
+                user.LastLoginAt = time;
+                db.SaveChanges();
             }
         }
         /// <summary>

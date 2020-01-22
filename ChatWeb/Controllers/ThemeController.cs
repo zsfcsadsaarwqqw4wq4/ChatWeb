@@ -156,7 +156,7 @@ namespace ChatWeb.Controllers
             int s = Convert.ToInt32(EnumHelper.ThemeEnum.System);
             var name = Enum.GetName(typeof(ThemeEnum), 1);
             var names = Enum.GetNames(typeof(ThemeEnum));
-            var stringdata = EnumHelper.GetEnumDescription(ThemeEnum.System);
+            var stringdata = EnumHelper.GetEnumDescription(ThemeEnum.System);           
         }
         //public static async Task TransactionScopeAsync()
         //{
@@ -177,7 +177,7 @@ namespace ChatWeb.Controllers
             string Url = "https://www.baidu.com";
             WebClient wc = new WebClient();
             byte[] htmldata = wc.DownloadData(Url);
-            string html = Encoding.UTF8.GetString(htmldata);
+            string html = Encoding.UTF8.GetString(htmldata); 
             #endregion
             #region 用正则匹配自己需要的标签
             Regex reg = new Regex(@"<a></a>");

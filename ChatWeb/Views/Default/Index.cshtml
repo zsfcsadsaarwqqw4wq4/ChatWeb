@@ -3,3 +3,53 @@
 }
 
 <h2>Index</h2>
+<script type="text/javascript">
+    //UTF-8编码
+    function encodeUtf8(text) {
+    const code = encodeURIComponent(text);
+    const bytes = [];
+    for (var i = 0; i < code.length; i++) {
+        const c = code.charAt(i);
+        if (c === '%') {
+            const hex = code.charAt(i + 1) + code.charAt(i + 2);
+            const hexVal = parseInt(hex, 16);
+            bytes.push(hexVal);
+            i += 2;
+        } else bytes.push(c.charCodeAt(0));
+    }
+    return bytes;
+    }
+    //UTF-8解码
+    function decodeUtf8(bytes) {
+        var encoded = "";
+        for (var i = 0; i < bytes.length; i++) {
+            encoded += '%' + bytes[i].toString(16);
+        }
+        return decodeURIComponent(encoded);
+    }
+    //ArrayBuffer转换为base64
+    function arrayBufferToBase64(buffer) {
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+    // base64转换为ArrayBuffer
+    function base64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding)
+            .replace(/\-/g, '+')
+            .replace(/_/g, '/');
+
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+</script>

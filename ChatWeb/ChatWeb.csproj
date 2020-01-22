@@ -70,6 +70,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\头像图片\jpush-api-csharp-client-master\jpush-api-csharp-client-master\Jiguang.JPush\bin\Debug\net45\Jiguang.JPush.dll</HintPath>
     </Reference>
+    <Reference Include="LitJson">
+      <HintPath>..\..\..\头像图片\WxPayAPI_CS\cs_sdk_v3.0.9\WxPayAPI\bin\LitJson.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.4.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.4.1\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
     </Reference>
@@ -214,6 +220,15 @@
     <Compile Include="App_Start\Redis.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startupcs.cs" />
+    <Compile Include="business\DownloadBill.cs" />
+    <Compile Include="business\JsApiPay.cs" />
+    <Compile Include="business\MicroPay.cs" />
+    <Compile Include="business\NativeNotify.cs" />
+    <Compile Include="business\NativePay.cs" />
+    <Compile Include="business\OrderQuery.cs" />
+    <Compile Include="business\Refund.cs" />
+    <Compile Include="business\RefundQuery.cs" />
+    <Compile Include="business\ResultNotify.cs" />
     <Compile Include="Chat.ashx.cs">
       <DependentUpon>Chat.ashx</DependentUpon>
     </Compile>
@@ -225,12 +240,25 @@
     <Compile Include="Controllers\FriendsController.cs" />
     <Compile Include="Controllers\LogoController.cs" />
     <Compile Include="Controllers\MsgController.cs" />
+    <Compile Include="Controllers\PayController.cs" />
     <Compile Include="Controllers\ThemeController.cs" />
     <Compile Include="Controllers\UploadController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="lib\Config.cs" />
+    <Compile Include="lib\Data.cs" />
+    <Compile Include="lib\DemoConfig.cs" />
+    <Compile Include="lib\Exception.cs" />
+    <Compile Include="lib\HttpService.cs" />
+    <Compile Include="lib\IConfig.cs" />
+    <Compile Include="lib\Log.cs" />
+    <Compile Include="lib\Notify.cs" />
+    <Compile Include="lib\RandomGenerator.cs" />
+    <Compile Include="lib\SafeXmlDocument.cs" />
+    <Compile Include="lib\WxPayApi.cs" />
+    <Compile Include="LogHelper.cs" />
     <Compile Include="Main.ashx.cs">
       <DependentUpon>Main.ashx</DependentUpon>
     </Compile>
@@ -433,6 +461,10 @@
     <Content Include="assets\js\recordFlash\VERSION" />
     <Content Include="Chat.ashx" />
     <Content Include="Main.ashx" />
+    <Content Include="log4net.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <Content Include="Push.ashx" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
@@ -462,6 +494,7 @@
     <Content Include="Views\User\Index.cshtml" />
     <Content Include="Views\Default\Index.cshtml" />
     <Content Include="Views\Upload\Index.cshtml" />
+    <Content Include="Views\Pay\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

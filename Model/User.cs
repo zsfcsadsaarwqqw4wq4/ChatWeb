@@ -55,5 +55,6 @@ namespace Model
         public Nullable<int> SecondThemeTypeID { get; set; }
         public Nullable<bool> IsEnterSendMsg { get; set; }
         public Nullable<bool> ChatSwitch { get; set; }
+        public Nullable<System.DateTime> LastLoginAt { get; set; }
     }
 }

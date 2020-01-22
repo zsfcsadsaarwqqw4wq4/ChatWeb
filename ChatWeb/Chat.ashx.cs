@@ -193,20 +193,35 @@ namespace ChatWeb
             }
             catch(Exception ex)
             {
-                Redis redis=new Redis();
-                var datas=redis.StringGet(uid.ToString());
-                string token = datas["token"].ToString();
-                string device = datas["device"].ToString();
+                UserBLL ub = new UserBLL();
+                var users=ub.GetUserById(userid);
+                string msgs = string.Empty;
+                Redis redis = new Redis();
+                var datas = redis.StringGet(uid.ToString());
+                string token = string.Empty;
+                string device = string.Empty;
+                if (datas != null)
+                {
+                    token = datas["token"].ToString();
+                    device = datas["device"].ToString();
+                }
+                if (Convert.ToBoolean(users.ChatSwitch))
+                {
+                    msgs = msg;
+                }
+                else
+                {
+                    msgs = DecodeBase64(msg);                    
+                }
                 if ("1".Equals(device))
                 {
-
-                };
+                    Push.PushMessageToSingle(msgs, JsonConvert.SerializeObject(res),token);
+                }
                 if ("2".Equals(device))
                 {
-                    Push.APNsPushToSingle("", msg, token, res);
+                    Push.APNsPushToSingle("", msgs, token, res);
                 }
-                DateTime time = DateTime.Now;
-                UserBLL ub =new UserBLL();
+                DateTime time = DateTime.Now;                
                 string result=ub.GetUserHeadImg(userid);
                 var temp = new
                 {
@@ -281,6 +296,7 @@ namespace ChatWeb
         {
             //发送成功，返回给所有目标用户
             CONNECT_TMP_POOL = new Dictionary<int, WebSocket>(CONNECT_POOL);
+
             try
             {
                 WebSocket destSocket = CONNECT_TMP_POOL[uid]; //目的客户端
@@ -396,7 +412,7 @@ namespace ChatWeb
         /// <param name="loginid">当前用户用户名</param>
         /// <param name="uid">接收者用户id</param>
         /// <param name="img">图片链接</param>
-        public static void SendPhotoToUsers(int userid, string loginid, int uid, string img, int messagestypeid,string guid,string ext,string width,string height)
+        public static void SendPhotoToUsers(int userid, string loginid, int uid, string img, int messagestypeid,string guid,string ext,string width,string height,object imgURLs)
         {
             //发送成功，返回给所有目标用户
             CONNECT_TMP_POOL = new Dictionary<int, WebSocket>(CONNECT_POOL);
@@ -417,7 +433,8 @@ namespace ChatWeb
                         ext=ext,
                         width=width,
                         height = height,
-                        messagestypeid = messagestypeid
+                        messagestypeid = messagestypeid,
+                        imgURLs= imgURLs
                     };
                     string data = JsonConvert.SerializeObject(temp);
                     byte[] bytes = Encoding.UTF8.GetBytes(data);
@@ -426,6 +443,19 @@ namespace ChatWeb
                 }
             }
             catch {
+                //Redis redis = new Redis();
+                //var datas = redis.StringGet(uid.ToString());
+                //string token = datas["token"].ToString();
+                //string device = datas["device"].ToString();
+                //string msg = "图片";
+                //if ("1".Equals(device))
+                //{
+
+                //};
+                //if ("2".Equals(device))
+                //{
+                //    Push.APNsPushToSingle("", msg, token, res);
+                //}
                 DateTime time = DateTime.Now;
                 UserBLL ub = new UserBLL();
                 string result = ub.GetUserHeadImg(userid);
@@ -440,7 +470,8 @@ namespace ChatWeb
                     ext = ext,
                     width = width,
                     height = height,
-                    messagestypeid = messagestypeid
+                    messagestypeid = messagestypeid,
+                    imgURLs= imgURLs
                 };
                 string data = JsonConvert.SerializeObject(temp);
                 byte[] bytes = Encoding.UTF8.GetBytes(data);
@@ -455,6 +486,46 @@ namespace ChatWeb
                     MESSAGE_POOL[uid].Add(new MessageInfo(buffer));//添加离线消息
                 }
             }
+        }
+        /// <summary>
+        /// base64编码
+        /// </summary>
+        /// <param name="code_type"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public static string EncodeBase64(string code)
+        {
+            string encode = "";
+            byte[] bytes = Encoding.UTF8.GetBytes(code);
+            try
+            {
+                encode = Convert.ToBase64String(bytes);
+            }
+            catch
+            {
+                encode = code;
+            }
+            return encode;
+        }
+        /// <summary>
+        /// base64解码
+        /// </summary>
+        /// <param name="code_type"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public static string DecodeBase64(string code)
+        {
+            string decode = "";
+            byte[] bytes = Convert.FromBase64String(code);
+            try
+            {
+                decode = Encoding.UTF8.GetString(bytes);
+            }
+            catch
+            {
+                decode = code;
+            }
+            return decode;
         }
         public bool IsReusable { get { return false; } }
     }

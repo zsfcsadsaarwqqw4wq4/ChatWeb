@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
 using ChatWeb.App_Start;
+using System.Text.RegularExpressions;
 
 namespace ChatWeb.Controllers
 {
@@ -73,10 +74,18 @@ namespace ChatWeb.Controllers
                     }
                     obj = JObject.Parse(json);
                 }
-                string password=MD5Helper.MD5Encrypt32(obj["password"].ToString());              
-                User user = new User()
+                string password=MD5Helper.MD5Encrypt32(obj["password"].ToString());             
+                string loginid = obj["loginid"].ToString();
+                Regex r1 = new Regex(@"^[a-zA-Z-0-9]{3,16}");
+                User user = new User();
+                if (r1.IsMatch(loginid))
                 {
-                    LoginID = obj["loginid"].ToString()
+                    user.LoginID = loginid;
+                }
+                else
+                {
+                    resultUser.msg = "登录名格式不对";
+                    return Json(resultUser);
                 };
                 string token = obj["token"].ToString();
                 if (string.IsNullOrEmpty(token))
@@ -92,6 +101,7 @@ namespace ChatWeb.Controllers
                 }
                 else
                 {
+                    DateTime time = DateTime.Now;
                     bool value = false;
                     if (string.IsNullOrEmpty(user.PassWords))
                     {
@@ -104,8 +114,28 @@ namespace ChatWeb.Controllers
                     var result=redis.StringGet(user.LoginID);
                     if (result!=null)
                     {
-                        resultUser.msg = "该用户已经登录了";
-                        return Json(resultUser);
+                        //如果该账户已经登录则通过第三方推送将消息通知给上一个用户
+                        var users = ub.GetUserName(user.LoginID);
+                        var datas = redis.StringGet(users.ID.ToString());
+                        if (datas != null)
+                        {
+                            string device = datas["device"].ToString();
+                            string tokens = datas["token"].ToString();
+                            object PenetrateMsg = null;
+                            if ("2".Equals(device))
+                            {
+                                Push.APNsPushToSingle("", "该账号已在其他地方登录", tokens, PenetrateMsg);
+                            }
+                            else if ("1".Equals(device))
+                            {
+                                Push.PushMessageToSingle("该账号已在其他地方登录", "", tokens);
+                            }
+                            else
+                            {
+                                resultUser.msg = "当前登录的是其他设备";
+                                return Json(resultUser);
+                            }
+                        }
                     }
                     else if (password.Equals(user.PassWord))
                     {
@@ -113,8 +143,9 @@ namespace ChatWeb.Controllers
                         {
                             resultUser.res = 205;
                             resultUser.state = 1;
-                            resultUser.msg = "由于您未设置迷惑密码系统帮您设置了迷惑密码为1111";
-                            resultUser.data = JwtHelper.CreateToken(user);
+                            resultUser.msg = "由于您未设置迷惑密码系统帮您设置了迷惑密码为1111";                           
+                            resultUser.data = JwtHelper.CreateToken(user, time);
+                            ub.UpdateUser(user.ID, time);
                             //用redis保存用户登录的信息
                             redis.StringSet(user.LoginID, user);
                         }
@@ -127,8 +158,9 @@ namespace ChatWeb.Controllers
                         redis.StringSet(user.ID.ToString(), datas);
                         resultUser.res = 200;
                         resultUser.state = 1;
-                        resultUser.msg = "用户是登录的私密聊天";
-                        resultUser.data = JwtHelper.CreateToken(user);          
+                        resultUser.msg = "用户是登录的私密聊天";                        
+                        resultUser.data = JwtHelper.CreateToken(user, time);
+                        ub.UpdateUser(user.ID, time);
                         //用redis保存用户登录的信息
                         redis.StringSet(user.LoginID,user);
                     }
@@ -137,7 +169,8 @@ namespace ChatWeb.Controllers
                         resultUser.res = 200;
                         resultUser.state = 2;
                         resultUser.msg = "用户是登录的工作聊天";
-                        resultUser.data = JwtHelper.CreateToken(user);
+                        ub.UpdateUser(user.ID, time);
+                        resultUser.data = JwtHelper.CreateToken(user, time);
                     }
                     else
                     {
@@ -149,7 +182,7 @@ namespace ChatWeb.Controllers
             }
             catch (HttpException ex)
             {
-
+                LogHelper.WriteLog(ex.Message.ToString(), ex);
             }
             return Json(resultUser);
         }
@@ -199,13 +232,14 @@ namespace ChatWeb.Controllers
                     return Json(resultUser);
                 }
                 string token = obj["token"].ToString();
-                if (!string.IsNullOrEmpty(token))
+                if (string.IsNullOrEmpty(token))
                 {
                     resultUser.msg = "注册失败";
                     return Json(resultUser);
                 }
                 if (ivs!=null)
                 {
+                    DateTime time = DateTime.Now;
                     Random random = new Random();
                     int result = random.Next(2, 8);
                     User user = new User();
@@ -221,6 +255,7 @@ namespace ChatWeb.Controllers
                     user.ChatTimeLimit = "0";
                     user.Shape = 1;
                     user.ChatSwitch = false;
+                    user.LastLoginAt = time;
                     if (ub.CreateUser(user))
                     {
                         var data= ub.GetUserName(loginid);
@@ -231,23 +266,23 @@ namespace ChatWeb.Controllers
                             token=token
                         };
                         redis.StringSet(data.ID.ToString(), datas);
+                        ib.DeleteInvitation(InviteCode);
                         resultUser.res = 200;
                         resultUser.msg = "注册成功"; 
-                        resultUser.data = JwtHelper.CreateToken(user);
+                        resultUser.data = JwtHelper.CreateToken(user,time);
                         return Json(resultUser);
                     }
-                    ib.DeleteInvitation(InviteCode);
                 }                  
 
             }
             catch (HttpException ex)
             {
-
+                LogHelper.WriteLog(ex.Message.ToString(),ex);
             }
             return Json(resultUser);
         }
         /// <summary>
-        /// 1代表当前登录用户是安卓设备，2代表是苹果设备,0代表既不是苹果也不是安卓
+        /// 1代表当前登录用户是安卓设备，2代表是苹果设备,0代表其他设备 
         /// </summary>
         /// <returns></returns>
         public int CheckAgent()

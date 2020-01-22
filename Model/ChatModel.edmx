@@ -316,6 +316,7 @@
           <Property Name="SecondThemeTypeID" Type="int" />
           <Property Name="IsEnterSendMsg" Type="bit" />
           <Property Name="ChatSwitch" Type="bit" />
+          <Property Name="LastLoginAt" Type="datetime" />
         </EntityType>
         <EntityType Name="UserPay">
           <Key>
@@ -390,10 +391,10 @@
           <EntitySet Name="State" EntityType="ChatModel.State" />
           <EntitySet Name="Theme" EntityType="ChatModel.Theme" />
           <EntitySet Name="ThemeType" EntityType="ChatModel.ThemeType" />
-          <EntitySet Name="User" EntityType="ChatModel.User" />
           <EntitySet Name="UserPay" EntityType="ChatModel.UserPay" />
           <EntitySet Name="AgentPower" EntityType="ChatModel.AgentPower" />
           <EntitySet Name="UID" EntityType="ChatModel.UID" />
+          <EntitySet Name="User" EntityType="ChatModel.User" />
         </EntityContainer>
         <EntityType Name="Agent">
           <Key>
@@ -640,6 +641,37 @@
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TypeName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="UserPay">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="PayMoney" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="PayTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AgentPower">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="BChild" Type="Boolean" Nullable="false" />
+          <Property Name="BChildMoney" Type="Boolean" Nullable="false" />
+          <Property Name="BRecvMoney" Type="Boolean" Nullable="false" />
+          <Property Name="BChildChild" Type="Boolean" Nullable="false" />
+          <Property Name="BChildChildMoney" Type="Boolean" Nullable="false" />
+          <Property Name="BChildChildRecvMoney" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="UID">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UDID" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="State" Type="Boolean" Nullable="false" />
+        </EntityType>
         <EntityType Name="User">
           <Key>
             <PropertyRef Name="ID" />
@@ -685,37 +717,7 @@
           <Property Name="SecondThemeTypeID" Type="Int32" />
           <Property Name="IsEnterSendMsg" Type="Boolean" />
           <Property Name="ChatSwitch" Type="Boolean" />
-        </EntityType>
-        <EntityType Name="UserPay">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserID" Type="Int32" Nullable="false" />
-          <Property Name="PayMoney" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <Property Name="PayTime" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Type" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="AgentPower">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserID" Type="Int32" Nullable="false" />
-          <Property Name="BChild" Type="Boolean" Nullable="false" />
-          <Property Name="BChildMoney" Type="Boolean" Nullable="false" />
-          <Property Name="BRecvMoney" Type="Boolean" Nullable="false" />
-          <Property Name="BChildChild" Type="Boolean" Nullable="false" />
-          <Property Name="BChildChildMoney" Type="Boolean" Nullable="false" />
-          <Property Name="BChildChildRecvMoney" Type="Boolean" Nullable="false" />
-        </EntityType>
-        <EntityType Name="UID">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UDID" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
-          <Property Name="State" Type="Boolean" Nullable="false" />
+          <Property Name="LastLoginAt" Type="DateTime" Precision="3" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -994,9 +996,44 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="UserPay">
+            <EntityTypeMapping TypeName="ChatModel.UserPay">
+              <MappingFragment StoreEntitySet="UserPay">
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="PayTime" ColumnName="PayTime" />
+                <ScalarProperty Name="PayMoney" ColumnName="PayMoney" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AgentPower">
+            <EntityTypeMapping TypeName="ChatModel.AgentPower">
+              <MappingFragment StoreEntitySet="AgentPower">
+                <ScalarProperty Name="BChildChildRecvMoney" ColumnName="BChildChildRecvMoney" />
+                <ScalarProperty Name="BChildChildMoney" ColumnName="BChildChildMoney" />
+                <ScalarProperty Name="BChildChild" ColumnName="BChildChild" />
+                <ScalarProperty Name="BRecvMoney" ColumnName="BRecvMoney" />
+                <ScalarProperty Name="BChildMoney" ColumnName="BChildMoney" />
+                <ScalarProperty Name="BChild" ColumnName="BChild" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UID">
+            <EntityTypeMapping TypeName="ChatModel.UID">
+              <MappingFragment StoreEntitySet="UID">
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="UDID" ColumnName="UDID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="User">
             <EntityTypeMapping TypeName="ChatModel.User">
               <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="LastLoginAt" ColumnName="LastLoginAt" />
                 <ScalarProperty Name="ChatSwitch" ColumnName="ChatSwitch" />
                 <ScalarProperty Name="IsEnterSendMsg" ColumnName="IsEnterSendMsg" />
                 <ScalarProperty Name="SecondThemeTypeID" ColumnName="SecondThemeTypeID" />
@@ -1037,40 +1074,6 @@
                 <ScalarProperty Name="PassWord" ColumnName="PassWord" />
                 <ScalarProperty Name="NickeName" ColumnName="NickeName" />
                 <ScalarProperty Name="LoginID" ColumnName="LoginID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UserPay">
-            <EntityTypeMapping TypeName="ChatModel.UserPay">
-              <MappingFragment StoreEntitySet="UserPay">
-                <ScalarProperty Name="Type" ColumnName="Type" />
-                <ScalarProperty Name="PayTime" ColumnName="PayTime" />
-                <ScalarProperty Name="PayMoney" ColumnName="PayMoney" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="AgentPower">
-            <EntityTypeMapping TypeName="ChatModel.AgentPower">
-              <MappingFragment StoreEntitySet="AgentPower">
-                <ScalarProperty Name="BChildChildRecvMoney" ColumnName="BChildChildRecvMoney" />
-                <ScalarProperty Name="BChildChildMoney" ColumnName="BChildChildMoney" />
-                <ScalarProperty Name="BChildChild" ColumnName="BChildChild" />
-                <ScalarProperty Name="BRecvMoney" ColumnName="BRecvMoney" />
-                <ScalarProperty Name="BChildMoney" ColumnName="BChildMoney" />
-                <ScalarProperty Name="BChild" ColumnName="BChild" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UID">
-            <EntityTypeMapping TypeName="ChatModel.UID">
-              <MappingFragment StoreEntitySet="UID">
-                <ScalarProperty Name="State" ColumnName="State" />
-                <ScalarProperty Name="UDID" ColumnName="UDID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

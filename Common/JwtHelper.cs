@@ -14,11 +14,11 @@ namespace Common
     {
         const string secret = "RHKJ";
 
-        public static string CreateToken(User us)
+        public static string CreateToken(User us,DateTime time)
         {
             try
             {
-                AuthInfo info = new AuthInfo { LoginID = us.LoginID, ID = us.ID};
+                AuthInfo info = new AuthInfo { LoginID = us.LoginID, ID = us.ID,Iat=time};
                 IJwtAlgorithm algorithm = new HMACSHA256Algorithm();
                 IJsonSerializer serializer = new JsonNetSerializer();
                 IBase64UrlEncoder urlEncoder = new JwtBase64UrlEncoder();
@@ -56,10 +56,6 @@ namespace Common
         /// <summary>
         /// jwt的签发时间
         /// </summary>
-        public string Iat { get; set; } = (DateTime.Now).ToString();
-        /// <summary>
-        /// jwt的过期时间，这个过期时间必须要大于签发时间.默认36000分钟
-        /// </summary>
-        public string Exp { get; set; } = (DateTime.Now.AddMinutes(36000)).ToString();
+        public DateTime Iat { get; set; }
     }
 }
