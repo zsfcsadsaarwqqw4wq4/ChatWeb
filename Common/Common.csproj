@@ -82,6 +82,7 @@
   <ItemGroup>
     <Compile Include="Constant.cs" />
     <Compile Include="EnumHelper.cs" />
+    <Compile Include="ImageClass.cs" />
     <Compile Include="JwtHelper.cs" />
     <Compile Include="MD5Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

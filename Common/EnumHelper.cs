@@ -41,7 +41,9 @@ namespace Common
             [Description("已读消息")]
             three = 3,
             [Description("历史消息")]
-            four = 4
+            four = 4,
+            [Description("添加好友")]
+            five = 5
         }
         public enum PassWord
         {
@@ -61,6 +63,7 @@ namespace Common
         /// <returns></returns>
         public static string GetEnumDescription(Enum enumValue)
         {
+            
             string value = enumValue.ToString();
             FieldInfo field = enumValue.GetType().GetField(value);
             object[] objs = field.GetCustomAttributes(typeof(DescriptionAttribute), false);  //获取描述属性

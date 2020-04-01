@@ -127,7 +127,19 @@ namespace DAL
                 return db.SaveChanges() > 0;
             }
         }
-        
+        /// <summary>
+        /// 设置用户的迷惑密码
+        /// </summary>
+        /// <returns></returns>
+        public bool EditChatSwitch(int id)
+        {
+            using (ChatEntities db = new ChatEntities())
+            {
+                User us = db.User.SingleOrDefault(u => u.ID == id);
+                us.ChatSwitch = true;
+                return db.SaveChanges() > 0;
+            }
+        }
         /// <summary>
         /// 设置用户的迷惑密码
         /// </summary>
@@ -311,6 +323,28 @@ namespace DAL
                     friendstate.user = db.User.FirstOrDefault(u => u.ID == temp.Key);
                     var data = temp.ToList();
                     friendstate.endtime = data.Last(u => u.UserID == temp.Key && u.Status == 0).OverdueTime;
+                    userlist.Add(friendstate);
+                }
+                return userlist;
+            }
+        }
+        /// <summary>
+        /// 查询用户好友请求记录
+        /// </summary>
+        /// <param name="Userid"></param>
+        /// <returns></returns>
+        public List<FriendState> QueryFriendRequest(int userid)
+        {
+            using (ChatEntities db = new ChatEntities())
+            {
+                List<Friends> us = db.Friends.Where(f => f.UserID == userid && f.Status == 0).ToList();
+                List<IGrouping<int, Friends>> res = us.GroupBy(aa => aa.FirendID).ToList();
+                List<FriendState> userlist = new List<FriendState>();
+                foreach (var temp in res)
+                {
+                    FriendState friendstate = new FriendState();
+                    friendstate.user = db.User.FirstOrDefault(u => u.ID == temp.Key);
+                    friendstate.endtime = db.Friends.FirstOrDefault(u => u.FirendID == temp.Key && u.Status == 0).OverdueTime;
                     userlist.Add(friendstate);
                 }
                 return userlist;

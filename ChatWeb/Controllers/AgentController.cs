@@ -64,6 +64,6 @@ namespace ChatWeb.Controllers
                 resultdata.data = agentmodel;
             }
             return Json(resultdata);
-        }                
+        }           
     }
 }

@@ -19,6 +19,7 @@ namespace ChatWeb
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             JobManager.Initialize(new MyRegistry());
+            log4net.Config.XmlConfigurator.Configure();
         }
     }
 }

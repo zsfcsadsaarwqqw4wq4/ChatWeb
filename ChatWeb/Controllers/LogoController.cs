@@ -39,16 +39,5 @@ namespace ChatWeb.Controllers
             };
             return Json(data, JsonRequestBehavior.AllowGet);
         }
-        /// <summary>
-        /// 接收用户选择的Logo和Name并打包ipa文件
-        /// </summary>
-        /// <returns></returns>
-        public void InputLogo()
-        {
-            using (StreamReader stream = new StreamReader(Request.InputStream))
-            {
-                string json = stream.ReadToEnd();
-            }
-        }
     }
 }

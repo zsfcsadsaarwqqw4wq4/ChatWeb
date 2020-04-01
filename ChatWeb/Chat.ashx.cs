@@ -164,7 +164,7 @@ namespace ChatWeb
         /// </summary>
         /// <param name="uid">接收者id</param>
         /// <param name="msg">发送的消息</param>
-        public static void SendMsgToUser(int userid, string loginid,int uid, string msg,string guid,int messagestypeid,bool isBART,object res)
+        public static void SendMsgToUser(int userid, string loginid,int uid, string msg,string guid,int messagestypeid,bool isBART,object res,dynamic flasedata)
         {
             //发送成功，返回给所有目标用户
             CONNECT_TMP_POOL = new Dictionary<int, WebSocket>(CONNECT_POOL);
@@ -174,6 +174,8 @@ namespace ChatWeb
                 if (destSocket != null && destSocket.State == WebSocketState.Open)
                 {
                     DateTime time = DateTime.Now;
+                    UserBLL ub = new UserBLL();
+                    string result = ub.GetUserHeadImg(userid);
                     var temp = new
                     {
                         userid=userid,
@@ -182,7 +184,8 @@ namespace ChatWeb
                         loginid=loginid,
                         uid=uid,
                         guid= guid,
-                        messagestypeid= messagestypeid,
+                        userheadportrait = Constant.files + result,
+                        messagestypeid = messagestypeid,
                         isBART = isBART
                     };
                     string data=JsonConvert.SerializeObject(temp);
@@ -215,11 +218,27 @@ namespace ChatWeb
                 }
                 if ("1".Equals(device))
                 {
-                    Push.PushMessageToSingle(msgs, JsonConvert.SerializeObject(res),token);
+                    if (flasedata != null)
+                    {
+                        Push.PushMessageToSingle(flasedata.content, JsonConvert.SerializeObject(res), token);
+                    }
+                    else
+                    {
+                        Push.PushMessageToSingle(msgs, JsonConvert.SerializeObject(res), token);
+                    }
                 }
                 if ("2".Equals(device))
                 {
-                    Push.APNsPushToSingle("", msgs, token, res);
+                    if (flasedata != null)
+                    {
+                        string title = flasedata.title;
+                        string content = flasedata.content;
+                        Push.APNsPushToSingle(title, content, token, res);
+                    }
+                    else
+                    {
+                        Push.APNsPushToSingle(loginid, msgs, token, res);
+                    }
                 }
                 DateTime time = DateTime.Now;                
                 string result=ub.GetUserHeadImg(userid);
@@ -265,8 +284,10 @@ namespace ChatWeb
             {
                 WebSocket destSocket = CONNECT_TMP_POOL[uid]; //目的客户端
                 if (destSocket != null && destSocket.State == WebSocketState.Open)
-                {
+                {   
                     DateTime time = DateTime.Now;
+                    UserBLL ub = new UserBLL();
+                    string result = ub.GetUserHeadImg(userid);
                     var temp = new
                     {
                         userid = userid,
@@ -274,6 +295,7 @@ namespace ChatWeb
                         msg = msg,
                         loginid = loginid,
                         uid = uid,
+                        userheadportrait = Constant.files + result,
                         messagestypeid = messagestypeid
                     };
                     string data = JsonConvert.SerializeObject(temp);
@@ -303,12 +325,15 @@ namespace ChatWeb
                 if (destSocket != null && destSocket.State == WebSocketState.Open)
                 {
                     DateTime time = DateTime.Now;
+                    UserBLL ub = new UserBLL();
+                    string result = ub.GetUserHeadImg(userid);
                     var temp = new
                     {
                         userid = userid,
                         time = time,
                         uid = uid,
                         guid = guid,
+                        userheadportrait = Constant.files + result,
                         messagestypeid = messagestypeid
                     };
                     string data = JsonConvert.SerializeObject(temp);
@@ -320,12 +345,15 @@ namespace ChatWeb
             catch
             {
                 DateTime time = DateTime.Now;
+                UserBLL ub = new UserBLL();
+                string result = ub.GetUserHeadImg(userid);
                 var temp = new
                 {
                     userid = userid,
                     time = time,
                     uid = uid,
                     guid = guid,
+                    userheadportrait = Constant.files + result,
                     messagestypeid = messagestypeid
                 };
                 string data = JsonConvert.SerializeObject(temp);
@@ -350,7 +378,7 @@ namespace ChatWeb
         /// <param name="loginid">当前用户用户名</param>
         /// <param name="uid">接收者用户id</param>
         /// <param name="img">图片链接</param>
-        public static void SendPhotoToUser(int userid, string loginid, int uid, string img, int messagestypeid, string guid)
+        public static void SendPhotoToUser(int userid, string loginid, int uid, string Url, int messagestypeid, string guid)
         {
             //发送成功，返回给所有目标用户
             CONNECT_TMP_POOL = new Dictionary<int, WebSocket>(CONNECT_POOL);
@@ -360,6 +388,75 @@ namespace ChatWeb
                 if (destSocket != null && destSocket.State == WebSocketState.Open)
                 {
                     DateTime time = DateTime.Now;
+                    UserBLL ub = new UserBLL();
+                    string result = ub.GetUserHeadImg(userid);
+                    var temp = new
+                    {
+                        userid = userid,
+                        time = time,
+                        Url = Url,
+                        loginid = loginid,
+                        uid = uid,
+                        guid = guid,
+                        userheadportrait = Constant.files + result,
+                        messagestypeid = messagestypeid,
+                    };
+                    string data = JsonConvert.SerializeObject(temp);
+                    byte[] bytes = Encoding.UTF8.GetBytes(data);
+                    ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
+                    destSocket.SendAsync(buffer, WebSocketMessageType.Text, true, new CancellationToken());
+                }
+            }
+            catch
+            {
+
+                DateTime time = DateTime.Now;
+                UserBLL ub = new UserBLL();
+                string result = ub.GetUserHeadImg(userid);
+                var temp = new
+                {
+                    userid = userid,
+                    time = time,
+                    Url = Url,
+                    loginid = loginid,
+                    uid = uid,
+                    guid = guid,
+                    userheadportrait = Constant.files + result,
+                    messagestypeid = messagestypeid
+                };
+                string data = JsonConvert.SerializeObject(temp);
+                byte[] bytes = Encoding.UTF8.GetBytes(data);
+                ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
+                try
+                {
+                    MESSAGE_POOL.Add(uid, new List<MessageInfo>());
+                    MESSAGE_POOL[uid].Add(new MessageInfo(buffer));
+                }
+                catch
+                {
+                    MESSAGE_POOL[uid].Add(new MessageInfo(buffer));//添加离线消息
+                }
+            }
+        }
+        /// <summary>
+        /// 发送图片个指定用户
+        /// </summary>
+        /// <param name="userid">当前登录用户id</param>
+        /// <param name="loginid">当前用户用户名</param>
+        /// <param name="uid">接收者用户id</param>
+        /// <param name="img">图片链接</param>
+        public static void SendPhotoToUser(int userid, string loginid, int uid, string img, int messagestypeid, string guid,object mock,bool isBART,int width, int height, dynamic flasedata)
+        {
+            //发送成功，返回给所有目标用户
+            CONNECT_TMP_POOL = new Dictionary<int, WebSocket>(CONNECT_POOL);
+            try
+            {
+                WebSocket destSocket = CONNECT_TMP_POOL[uid]; //目的客户端
+                if (destSocket != null && destSocket.State == WebSocketState.Open)
+                {
+                    DateTime time = DateTime.Now;
+                    UserBLL ub = new UserBLL();
+                    string result = ub.GetUserHeadImg(userid);
                     var temp = new
                     {
                         userid = userid,
@@ -368,7 +465,12 @@ namespace ChatWeb
                         loginid = loginid,
                         uid = uid,
                         guid = guid,
-                        messagestypeid = messagestypeid
+                        userheadportrait = Constant.files + result,
+                        messagestypeid = messagestypeid,
+                        mock=mock,
+                        isBART= isBART,
+                        width,
+                        height
                     };
                     string data = JsonConvert.SerializeObject(temp);
                     byte[] bytes = Encoding.UTF8.GetBytes(data);
@@ -377,9 +479,47 @@ namespace ChatWeb
                 }
             }
             catch {
-
-                DateTime time = DateTime.Now;
                 UserBLL ub = new UserBLL();
+                Redis redis = new Redis();
+                var datas = redis.StringGet(uid.ToString());
+                string token = string.Empty;
+                string device = string.Empty;
+                if (datas != null)
+                {
+                    token = datas["token"].ToString();
+                    device = datas["device"].ToString();
+                }
+                //if ("1".Equals(device))
+                //{
+                //    if (flasedata != null)
+                //    {
+                //        Push.PushMessageToSingle(flasedata.content, JsonConvert.SerializeObject(res), token);
+                //    }
+                //    else
+                //    {
+                //        Push.PushMessageToSingle(msgs, JsonConvert.SerializeObject(res), token);
+                //    }
+                //}
+                if ("2".Equals(device))
+                {
+                    var res = new
+                    {
+                        userid = userid,
+                        uid = uid,
+                        img = img
+                    };
+                    if (flasedata != null)
+                    {
+                        string title = flasedata.title;
+                        string content = flasedata.content;
+                        Push.APNsPushToSingle(title, "这是一条回复[图片]吧", token, res);
+                    }
+                    else
+                    {
+                        Push.APNsPushToSingle(loginid, "[图片]", token, res);
+                    }
+                }
+                DateTime time = DateTime.Now;
                 string result = ub.GetUserHeadImg(userid);
                 var temp = new
                 {
@@ -389,9 +529,122 @@ namespace ChatWeb
                     loginid = loginid,
                     uid = uid,
                     guid = guid,
-                    messagestypeid = messagestypeid
+                    userheadportrait = Constant.files + result,
+                    messagestypeid = messagestypeid,
+                    mock = mock,
+                    isBART = isBART,
+                    width,
+                    height
                 };
                 string data = JsonConvert.SerializeObject(temp);                    
+                byte[] bytes = Encoding.UTF8.GetBytes(data);
+                ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
+                try
+                {
+                    MESSAGE_POOL.Add(uid, new List<MessageInfo>());
+                    MESSAGE_POOL[uid].Add(new MessageInfo(buffer));
+                }
+                catch
+                {
+                    MESSAGE_POOL[uid].Add(new MessageInfo(buffer));//添加离线消息
+                }
+            }
+        }
+        public static void SendPhotoToUser(int userid, string loginid, int uid, string img, int messagestypeid, string guid, object mock, bool isBART, int width, int height, dynamic flasedata,string thumbImg)
+        {
+            //发送成功，返回给所有目标用户
+            CONNECT_TMP_POOL = new Dictionary<int, WebSocket>(CONNECT_POOL);
+            try
+            {
+                WebSocket destSocket = CONNECT_TMP_POOL[uid]; //目的客户端
+                if (destSocket != null && destSocket.State == WebSocketState.Open)
+                {
+                    DateTime time = DateTime.Now;
+                    UserBLL ub = new UserBLL();
+                    string result = ub.GetUserHeadImg(userid);
+                    var temp = new
+                    {
+                        userid = userid,
+                        time = time,
+                        img = img,
+                        loginid = loginid,
+                        uid = uid,
+                        guid = guid,
+                        userheadportrait = Constant.files + result,
+                        messagestypeid = messagestypeid,
+                        mock = mock,
+                        isBART = isBART,
+                        width,
+                        height,
+                        thumbImg
+                    };
+                    string data = JsonConvert.SerializeObject(temp);
+                    byte[] bytes = Encoding.UTF8.GetBytes(data);
+                    ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
+                    destSocket.SendAsync(buffer, WebSocketMessageType.Text, true, new CancellationToken());
+                }
+            }
+            catch
+            {
+                UserBLL ub = new UserBLL();
+                Redis redis = new Redis();
+                var datas = redis.StringGet(uid.ToString());
+                string token = string.Empty;
+                string device = string.Empty;
+                if (datas != null)
+                {
+                    token = datas["token"].ToString();
+                    device = datas["device"].ToString();
+                }
+                //if ("1".Equals(device))
+                //{
+                //    if (flasedata != null)
+                //    {
+                //        Push.PushMessageToSingle(flasedata.content, JsonConvert.SerializeObject(res), token);
+                //    }
+                //    else
+                //    {
+                //        Push.PushMessageToSingle(msgs, JsonConvert.SerializeObject(res), token);
+                //    }
+                //}
+                if ("2".Equals(device))
+                {
+                    var res = new
+                    {
+                        userid = userid,
+                        uid = uid,
+                        img = img
+                    };
+                    if (flasedata != null)
+                    {
+                        string title = flasedata.title;
+                        string content = flasedata.content;
+                        Push.APNsPushToSingle(title, "这是一条回复[图片]吧", token, res);
+                    }
+                    else
+                    {
+                        Push.APNsPushToSingle(loginid, "[图片]", token, res);
+                    }
+                }
+                DateTime time = DateTime.Now;
+                string result = ub.GetUserHeadImg(userid);
+                var temp = new
+                {
+                    userid = userid,
+                    time = time,
+                    img = img,
+                    loginid = loginid,
+                    uid = uid,
+                    guid = guid,
+                    userheadportrait = Constant.files + result,
+                    messagestypeid = messagestypeid,
+                    mock = mock,
+                    isBART = isBART,
+                    width,
+                    height,
+                    thumbImg
+                };
+                string data = JsonConvert.SerializeObject(temp);
                 byte[] bytes = Encoding.UTF8.GetBytes(data);
                 ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
                 try
@@ -422,6 +675,8 @@ namespace ChatWeb
                 if (destSocket != null && destSocket.State == WebSocketState.Open)
                 {
                     DateTime time = DateTime.Now;
+                    UserBLL ub = new UserBLL();
+                    string result = ub.GetUserHeadImg(userid);
                     var temp = new
                     {
                         userid = userid,
@@ -434,7 +689,8 @@ namespace ChatWeb
                         width=width,
                         height = height,
                         messagestypeid = messagestypeid,
-                        imgURLs= imgURLs
+                        userheadportrait = Constant.files + result,
+                        imgURLs = imgURLs
                     };
                     string data = JsonConvert.SerializeObject(temp);
                     byte[] bytes = Encoding.UTF8.GetBytes(data);
@@ -443,19 +699,19 @@ namespace ChatWeb
                 }
             }
             catch {
-                //Redis redis = new Redis();
-                //var datas = redis.StringGet(uid.ToString());
-                //string token = datas["token"].ToString();
-                //string device = datas["device"].ToString();
-                //string msg = "图片";
-                //if ("1".Equals(device))
-                //{
+                Redis redis = new Redis();
+                var datas = redis.StringGet(uid.ToString());
+                string token = datas["token"].ToString();
+                string device = datas["device"].ToString();                
+                string msg = "图片";
+                if ("1".Equals(device))
+                {
 
-                //};
-                //if ("2".Equals(device))
-                //{
-                //    Push.APNsPushToSingle("", msg, token, res);
-                //}
+                };
+                if ("2".Equals(device))
+                {
+                    Push.APNsPushToSingle("", msg, token, null);
+                }
                 DateTime time = DateTime.Now;
                 UserBLL ub = new UserBLL();
                 string result = ub.GetUserHeadImg(userid);
@@ -471,7 +727,8 @@ namespace ChatWeb
                     width = width,
                     height = height,
                     messagestypeid = messagestypeid,
-                    imgURLs= imgURLs
+                    userheadportrait = Constant.files + result,
+                    imgURLs = imgURLs
                 };
                 string data = JsonConvert.SerializeObject(temp);
                 byte[] bytes = Encoding.UTF8.GetBytes(data);
@@ -484,6 +741,56 @@ namespace ChatWeb
                 catch
                 {
                     MESSAGE_POOL[uid].Add(new MessageInfo(buffer));//添加离线消息
+                }
+            }
+        }
+        /// <summary>
+        /// 通知添加好友接口
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="loginid"></param>
+        /// <param name="headportrait"></param>
+        public static void AddNewFriends(object us,int messagestypeid,int State,int friendsid)
+        {
+            //发送成功，返回给所有目标用户
+            CONNECT_TMP_POOL = new Dictionary<int, WebSocket>(CONNECT_POOL);
+            try
+            {
+                WebSocket destSocket = CONNECT_TMP_POOL[friendsid]; //目的客户端
+                if (destSocket != null && destSocket.State == WebSocketState.Open)
+                {
+                    DateTime time = DateTime.Now;
+                    var temp = new
+                    {
+                        user = us,
+                        messagestypeid = messagestypeid,
+                        State = State
+                    };
+                    string data = JsonConvert.SerializeObject(temp);
+                    byte[] bytes = Encoding.UTF8.GetBytes(data);
+                    ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
+                    destSocket.SendAsync(buffer, WebSocketMessageType.Text, true, new CancellationToken());
+                }
+            }
+            catch
+            {
+                var temp = new
+                {
+                    user = us,
+                    messagestypeid = messagestypeid,
+                    State = State
+                };
+                string data = JsonConvert.SerializeObject(temp);
+                byte[] bytes = Encoding.UTF8.GetBytes(data);
+                ArraySegment<byte> buffer = new ArraySegment<byte>(bytes);
+                try
+                {
+                    MESSAGE_POOL.Add(friendsid, new List<MessageInfo>());
+                    MESSAGE_POOL[friendsid].Add(new MessageInfo(buffer));
+                }
+                catch
+                {
+                    MESSAGE_POOL[friendsid].Add(new MessageInfo(buffer));//添加离线消息
                 }
             }
         }
@@ -507,6 +814,7 @@ namespace ChatWeb
             }
             return encode;
         }
+
         /// <summary>
         /// base64解码
         /// </summary>

@@ -11,6 +11,7 @@ using System.Web.Mvc;
 using System.Data.Entity;
 using ChatWeb.App_Start;
 using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 
 namespace ChatWeb.Controllers
 {
@@ -87,7 +88,9 @@ namespace ChatWeb.Controllers
                     resultUser.msg = "登录名格式不对";
                     return Json(resultUser);
                 };
-                string token = obj["token"].ToString();
+                dynamic push = JsonConvert.DeserializeObject(obj["push"].ToString());
+                string token = push.token;
+                string clientid = push.clientid;
                 if (string.IsNullOrEmpty(token))
                 {
                     resultUser.msg = "登录失败";
@@ -112,7 +115,7 @@ namespace ChatWeb.Controllers
                         }                       
                     }
                     var result=redis.StringGet(user.LoginID);
-                    if (result!=null)
+                    if (result != null)
                     {
                         //如果该账户已经登录则通过第三方推送将消息通知给上一个用户
                         var users = ub.GetUserName(user.LoginID);
@@ -120,15 +123,23 @@ namespace ChatWeb.Controllers
                         if (datas != null)
                         {
                             string device = datas["device"].ToString();
-                            string tokens = datas["token"].ToString();
-                            object PenetrateMsg = null;
+                            string clientids = datas["clientid"].ToString();
+                            var datass = new
+                            {
+                                title = "该账号已在其他地方登录"
+                            };
+                            var PenetrateMsg = new
+                            {
+                                type = 0,
+                                data = datass
+                            };
                             if ("2".Equals(device))
                             {
-                                Push.APNsPushToSingle("", "该账号已在其他地方登录", tokens, PenetrateMsg);
+                                Push.IosPushMessageToSingle(JsonConvert.SerializeObject(PenetrateMsg), clientids);
                             }
                             else if ("1".Equals(device))
                             {
-                                Push.PushMessageToSingle("该账号已在其他地方登录", "", tokens);
+                                Push.IosPushMessageToSingle(JsonConvert.SerializeObject(PenetrateMsg), clientids);
                             }
                             else
                             {
@@ -137,7 +148,7 @@ namespace ChatWeb.Controllers
                             }
                         }
                     }
-                    else if (password.Equals(user.PassWord))
+                    if (password.Equals(user.PassWord))
                     {
                         if (value)
                         {
@@ -153,12 +164,13 @@ namespace ChatWeb.Controllers
                         var datas = new
                         {
                             device = res,
-                            token = token
+                            token = token,
+                            clientid= clientid
                         };
                         redis.StringSet(user.ID.ToString(), datas);
                         resultUser.res = 200;
                         resultUser.state = 1;
-                        resultUser.msg = "用户是登录的私密聊天";                        
+                        resultUser.msg = "用户是登录的正常聊天";                     
                         resultUser.data = JwtHelper.CreateToken(user, time);
                         ub.UpdateUser(user.ID, time);
                         //用redis保存用户登录的信息
@@ -168,7 +180,8 @@ namespace ChatWeb.Controllers
                     {
                         resultUser.res = 200;
                         resultUser.state = 2;
-                        resultUser.msg = "用户是登录的工作聊天";
+                        resultUser.msg = "用户是登录的私密聊天";
+                        ub.EditChatSwitch(user.ID);
                         ub.UpdateUser(user.ID, time);
                         resultUser.data = JwtHelper.CreateToken(user, time);
                     }
@@ -231,7 +244,9 @@ namespace ChatWeb.Controllers
                     resultUser.msg = "邀请码已过期";
                     return Json(resultUser);
                 }
-                string token = obj["token"].ToString();
+                dynamic push = JsonConvert.DeserializeObject(obj["push"].ToString());
+                string token = push.token;
+                string clientid = push.clientid;
                 if (string.IsNullOrEmpty(token))
                 {
                     resultUser.msg = "注册失败";
@@ -263,9 +278,11 @@ namespace ChatWeb.Controllers
                         var datas = new
                         {
                             device = res,
-                            token=token
+                            token=token,
+                            clientid = clientid
                         };
                         redis.StringSet(data.ID.ToString(), datas);
+                        redis.StringSet(user.LoginID, user);
                         ib.DeleteInvitation(InviteCode);
                         resultUser.res = 200;
                         resultUser.msg = "注册成功"; 
@@ -298,6 +315,30 @@ namespace ChatWeb.Controllers
                 return 2;
             }
             return 0;
+        }   
+        public string  LoginInfo()
+        {
+            string account = "admin";
+            string password = "123456";
+            using (StreamReader read = new StreamReader(Request.InputStream))
+            {
+                string data = read.ReadToEnd();
+                var datas=JsonConvert.DeserializeObject<IDictionary<string,object>>(data);
+                var loginid = datas["account"];
+                var pwd = datas["password"];
+                if (account.Equals(loginid)&&password.Equals(pwd))
+                {
+                    var res = new
+                    {
+                        headimg = Constant.files + "/Images/head/9.jpg",                       
+                    };
+                }
+                else
+                {
+                    return "登陆失败";
+                }
+            }
+            return "";
         }
     }
 }

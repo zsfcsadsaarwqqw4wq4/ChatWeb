@@ -34,7 +34,7 @@
         <EntityTypeShape EntityType="ChatModel.UserPay" Width="1.5" PointX="6.75" PointY="13.75" />
         <EntityTypeShape EntityType="ChatModel.AgentPower" Width="1.5" PointX="9.375" PointY="13.75" />
         <EntityTypeShape EntityType="ChatModel.UID" Width="1.5" PointX="15.375" PointY="0.75" />
-        <EntityTypeShape EntityType="ChatModel.User" Width="1.5" PointX="2.875" PointY="4.625" IsExpanded="false" />
+        <EntityTypeShape EntityType="ChatModel.User" Width="1.5" PointX="15.375" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

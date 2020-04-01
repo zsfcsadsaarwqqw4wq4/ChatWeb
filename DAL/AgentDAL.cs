@@ -158,7 +158,7 @@ namespace DAL
                 {
                     int parentid = db.Agent.FirstOrDefault(o => o.UserID == agent.ParentID).UserID;
                     agentmodel.ParentAgent = db.User.FirstOrDefault(o => o.ID == parentid);
-                    var childAgent = db.Agent.Where(o => o.ParentID == userid).ToList();
+                    var childAgent = db.Agent.Where(o => o.ParentID == userid).ToList();                   
                     List<User> ulist = new List<User>();
                     List<ChildUser> childuserlist = new List<ChildUser>();
                     if (childAgent.Count > 0)

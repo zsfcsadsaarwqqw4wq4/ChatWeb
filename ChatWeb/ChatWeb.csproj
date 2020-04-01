@@ -320,6 +320,7 @@
     <Content Include="assets\js\amazeui.widgets.helper.min.js" />
     <Content Include="assets\js\circleLoad.js" />
     <Content Include="assets\js\Clipboard.min.js" />
+    <Content Include="assets\js\compression.js" />
     <Content Include="assets\js\cookie.js" />
     <Content Include="assets\js\globe.js" />
     <Content Include="assets\js\handlebars.min.js" />

@@ -24,7 +24,7 @@ namespace ChatWeb
         private static String APPID = "L9oAbDqZcr8DazmwiGlOt4";
         private static String APPKEY = "wKppBiwovrAOERqpNIJ4n6";
         private static String MASTERSECRET = "ya67y9uHXV6erZ08rhmn92";
-        private static String CLIENTID = "7018ef85b40466ffcefaf41ba17c7e21";
+        private static String CLIENTID = "f5cedb30883d33aa524a89400f90f298";
         private static String token = "6926fa659909111950b08b6f53fb2f7d2e4ba1a27ab70e0f4618a3d0d80577e3";
         //private static String CLIENTID1 = "7018ef85b40466ffcefaf41ba17c7e21";
         //private static String CLIENTID2 = "f5cedb30883d33aa524a89400f90f298";
@@ -116,6 +116,60 @@ namespace ChatWeb
 
             return template;
         }
+        /// <summary>
+        /// ios端个推透传内容
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="data"></param>
+        /// <param name="cid"></param>
+        public static void IosPushMessageToSingle(string data, string cid)
+        {
+            IGtPush push = new IGtPush(HOST, APPKEY, MASTERSECRET);
+            //消息模版：TransmissionTemplate:透传模板
+            var template = TransmissionTemplateDemo(data);
+            // 单推消息模型
+            SingleMessage message = new SingleMessage();
+            message.IsOffline = false;                         // 用户当前不在线时，是否离线存储,可选
+            message.OfflineExpireTime = 1000 * 3600 * 12;            // 离线有效时间，单位为毫秒，可选
+            message.Data = template;
+            //判断是否客户端是否wifi环境下推送，2为4G/3G/2G，1为在WIFI环境下，0为不限制环境
+            message.PushNetWorkType = 0;
+            com.igetui.api.openservice.igetui.Target target = new com.igetui.api.openservice.igetui.Target();
+            target.appId = APPID;
+            target.clientId = cid;
+            //target.alias = ALIAS;
+            try
+            {
+                push.pushMessageToSingle(message, target);
+            }
+            catch (RequestException e)
+            {
+                String requestId = e.RequestId;
+                //发送失败后的重发
+                push.pushMessageToSingle(message, target, requestId);
+            }
+        }
+        //透传模板动作内容
+        public static TransmissionTemplate TransmissionTemplateDemo(string data)
+        {
+            TransmissionTemplate template = new TransmissionTemplate();
+            template.AppId = APPID;
+            template.AppKey = APPKEY;
+            //应用启动类型，1：强制应用启动 2：等待应用启动
+            template.TransmissionType = 1;
+            //透传内容  
+            template.TransmissionContent = data;
+            return template;
+        }
+
+        /// <summary>
+        /// ios个推离线通知
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="content"></param>
+        /// <param name="token"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public static string APNsPushToSingle(string title, string content, string token,object data)
         {
             APNTemplate template = new APNTemplate();

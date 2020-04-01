@@ -53,10 +53,6 @@ namespace ChatWeb.Controllers
                 {
                     throw new HttpException("身份验证失败,请重新登录");
                 };
-                if (us.LastLoginAt>authInfo.Iat)
-                {
-                    throw new HttpException("身份验证已过期，请重新登录");
-                };
                 using (StreamReader stream = new StreamReader(Request.InputStream))
                 {
                     string json = stream.ReadToEnd();

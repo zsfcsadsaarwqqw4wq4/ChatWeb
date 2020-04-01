@@ -100,7 +100,12 @@ namespace ChatWeb.Controllers
             int messagestypeid=int.Parse(GetParams("messagestypeid"));
             bool isBART = us.BurnAfterReading;
             string guid = GetParams("guid");
+            dynamic mock = JsonConvert.DeserializeObject(GetParams("mock").ToString());
+            var content = mock.secondary.content;
+            var title = mock.first.appBarTitle + "吧";
+            users = ub.GetUserById(uid);
             int status = 0;
+            object flasedata = null;
             bool recivestatus = true;
             Messages msgs=new Messages();        
             msgs.FromUserID = userid;
@@ -120,10 +125,26 @@ namespace ChatWeb.Controllers
             var data = new
             {
                 userid= userid,
-                uid=uid,
+                loginid=loginid,
+                headportrait=Constant.files+us.HeadPortrait,
+                uid =uid,
                 msg=msg
-            };       
-            Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART, data);
+            };
+            var datas = new
+            {
+                title=title,
+                content =content
+
+            };
+            if (users.ChatSwitch)
+            {
+                flasedata = datas;
+                Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART, data, flasedata);
+            }
+            else
+            {
+                Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART, data, flasedata);
+            }
             return Json(resultdata);
         }
         /// <summary>
@@ -183,20 +204,22 @@ namespace ChatWeb.Controllers
             }
             catch (HttpException ex)
             {
+                LogHelper.WriteLog(ex.Message,ex);
                 this.resultData.msg = ex.Message;
                 return Json(resultData);
             }
             resultData.res = 200;
             resultData.msg = "发送图片成功";
             return Json(resultData);
-        }
+        }    
         /// <summary>
         /// 发送图片
         /// </summary>
         public JsonResult SendPhotos()
         {
-            string OriURL = string.Empty;
-            string CompURL = string.Empty;
+            string path = string.Empty;
+            string paths = string.Empty;
+            string img = string.Empty;
             try
             {
                 string token = Request.Headers["token"];
@@ -217,81 +240,150 @@ namespace ChatWeb.Controllers
                 {
                     throw new HttpException("身份验证失败,请重新登录");
                 };
-                if (us.LastLoginAt>authInfo.Iat)
+                int messagestypeid = 2;
+                int uid = int.Parse(Request["uid"].ToString());
+                string guid = Request["guid"].ToString();
+                string imgbase64 = Request["base64"].ToString();
+                bool isBART = us.BurnAfterReading;
+                dynamic mock = JsonConvert.DeserializeObject(Request["mock"].ToString());
+                var content = mock.secondary.content;
+                var title = mock.first.appBarTitle + "吧";
+                object flasedata = null;
+                int width = Convert.ToInt32(Request["width"].ToString());
+                int height = Convert.ToInt32(Request["height"].ToString());
+                users = ub.GetUserById(uid);
+                //获取图片后缀
+                string type = imgbase64.Split(',')[0].Split(';')[0].Split('/')[1];
+                string[] str = imgbase64.Split(',');
+                byte[] srcBuf = Convert.FromBase64String(str[1]);
+                var times = DateTime.Now.ToFileTime().ToString();
+                path = Path.Combine(Server.MapPath(string.Format("~/{0}", "Images")), times + '.' + type);
+                img = Constant.files + "/" + "Images" + "/" + times + "." + type;
+
+                using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {
-                    throw new HttpException("身份过期,请重新登录");
+                    fs.Write(srcBuf, 0, srcBuf.Length);
+                    fs.Close();
+                };
+                ImageClass imageclass =new ImageClass(path);
+                double Percent = 0.8;
+                var timess = DateTime.Now.ToFileTime().ToString();
+                string thumbImg= Constant.files + "/" + "Images" + "/" + timess + "." + type;
+                paths = Path.Combine(Server.MapPath(string.Format("~/{0}", "Images")), timess + '.' + type);
+                bool result=imageclass.GetReducedImage(Convert.ToInt32(width * Percent), Convert.ToInt32(height * Percent), paths);
+                var datas = new
+                {
+                    title = title,
+                    content = content
+
+                };
+                if (users.ChatSwitch)
+                {
+                    flasedata = datas;
+                    if (result)
+                    {
+                        Chat.SendPhotoToUser(us.ID, us.LoginID, uid, img, messagestypeid, guid, mock, isBART, width, height, flasedata, thumbImg);
+                    }
+                    else
+                    {
+                        Chat.SendPhotoToUser(us.ID, us.LoginID, uid, img, messagestypeid, guid, mock, isBART, width, height, flasedata, thumbImg);
+                    }
+                }
+                else
+                {
+                    if (result)
+                    {
+                        Chat.SendPhotoToUser(us.ID, us.LoginID, uid, img, messagestypeid, guid, mock, isBART, width, height, flasedata, thumbImg);
+                    }
+                    else
+                    {
+                        Chat.SendPhotoToUser(us.ID, us.LoginID, uid, img, messagestypeid, guid, mock, isBART, width, height, flasedata, thumbImg);
+                    }
+                }
+                resultData.res = 200;
+                resultData.msg = "发送图片成功";
+                resultData.data = img;
+                return Json(resultData);
+            }
+            catch
+            {
+                resultData.msg = "发送图片失败";
+                return Json(resultData);
+            }
+        }
+        public JsonResult NewSendPhoto()
+        {
+            string path= string.Empty;
+            string img = string.Empty;
+            try
+            {
+                string token = Request.Headers["token"];
+                if (string.IsNullOrEmpty(token))
+                {
+                    throw new HttpException("身份验证失败");
+                }
+                AuthInfo authInfo = JwtHelper.GetJwtDecode(token);
+                //判断token正确性
+                if (authInfo == null)
+                {
+                    throw new HttpException("身份验证失败");
+                }
+                UserBLL ud = new UserBLL();
+                this.us = ud.GetUserById(authInfo.ID);
+                //验证身份信息是否正确
+                if (us == null || authInfo.LoginID != us.LoginID)
+                {
+                    throw new HttpException("身份验证失败,请重新登录");
                 };
                 int messagestypeid = 2;
                 int uid = int.Parse(Request["uid"].ToString());
                 string guid = Request["guid"].ToString();
-                string width =Request["width"].ToString();
-                string height = Request["height"].ToString();
-                var res = Request.Files[0];
-                var time = DateTime.Now.ToFileTime().ToString();
-                try
+                string imgbase64=Request["base64"].ToString();
+                bool isBART = us.BurnAfterReading;
+                dynamic mock =JsonConvert.DeserializeObject(Request["mock"].ToString());
+                var content = mock.secondary.content;
+                var title = mock.first.appBarTitle + "吧";
+                object flasedata = null;
+                int width =Convert.ToInt32(Request["width"].ToString());
+                int height = Convert.ToInt32(Request["height"].ToString());
+                users = ub.GetUserById(uid);
+                //获取图片后缀
+                string type = imgbase64.Split(',')[0].Split(';')[0].Split('/')[1];
+                string[] str = imgbase64.Split(',');
+                byte[] srcBuf= Convert.FromBase64String(str[1]);
+                var times = DateTime.Now.ToFileTime().ToString();
+                path = Path.Combine(Server.MapPath(string.Format("~/{0}", "Images")), times + '.'+type);
+                img = Constant.files + "/" + "Images" +"/"+ times + "." + type;
+                using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {
-                    var file = Request.Files[0];
-                    var type= file.ContentType.Split('/')[1];
-                    string filepath = Path.Combine(Server.MapPath(string.Format("~/{0}", "Images")), time+ '.'+type);
-                    file.SaveAs(filepath);
-                    OriURL = Constant.files + "/Images/" + time+ '.' + type;
-                    if (file.ContentLength>1024000)
-                    {
-                        Stream imgstream=ImgCompression();
-                        byte[] srcBuf = new byte[imgstream.Length];
-                        imgstream.Read(srcBuf,0, srcBuf.Length);
-                        imgstream.Seek(0, SeekOrigin.Begin);
-                        var times = DateTime.Now.ToFileTime().ToString();
-                        var path= Path.Combine(Server.MapPath(string.Format("~/{0}", "Images")), times+ '.'+type);
-                        using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write))
-                        {
-                            fs.Write(srcBuf, 0, srcBuf.Length);
-                            fs.Close();
-                        };
-                        CompURL = Constant.files + "/Images/" + times + '.' + type;
-                    }
-                    else
-                    {
-                        CompURL = OriURL;
-                    }
+                    fs.Write(srcBuf, 0, srcBuf.Length);
+                    fs.Close();
+                };
+                var datas = new
+                {
+                    title = title,
+                    content = content
 
-                }
-                catch (Exception ex)
+                };
+                if (users.ChatSwitch)
                 {
-                   
-                }                
-                var filetype = res.ContentType.Split('/')[0];
-                if ("image".Equals(filetype))
-                {
-                    string ext = res.FileName.Split('.')[1];
-                    Stream filestream = res.InputStream;
-                    var bytes = SwitchDataTypecs.StreamToBytes(filestream);
-                    string img = Convert.ToBase64String(bytes);
-                    string data = "data:" + res.ContentType;
-                    string base64 = ";base64,";
-                    img = data + base64 + img;
-                    var imgURLs = new
-                    {
-                        OriURL= OriURL,
-                        CompURL= CompURL
-                    };
-                    Chat.SendPhotoToUsers(us.ID, us.LoginID, uid, img, messagestypeid, guid, ext, width, height, imgURLs);
+                    flasedata = datas;
+                    Chat.SendPhotoToUser(us.ID, us.LoginID, uid, img, messagestypeid, guid, mock, isBART, width, height, flasedata);
                 }
                 else
                 {
-                    resultData.msg = "上传的不是图片";
-                    return Json(resultData);
+                    Chat.SendPhotoToUser(us.ID, us.LoginID, uid, img, messagestypeid, guid, mock, isBART, width, height, flasedata);
                 }
-            }
-            catch (HttpException ex)
-            {
-                this.resultData.msg = ex.Message;
+                resultData.res = 200;
+                resultData.msg = "发送图片成功";
+                resultData.data = img;
                 return Json(resultData);
             }
-            resultData.res = 200;
-            resultData.msg = "发送图片成功";
-            resultData.data = OriURL;
-            return Json(resultData);
+            catch
+            {
+                resultData.msg = "发送图片失败";
+                return Json(resultData);
+            }
         }
         /// <summary>
         /// 将图片数据转换为Base64字符串
@@ -372,7 +464,7 @@ namespace ChatWeb.Controllers
                         us.SecondProblem = secondproblem;
                         us.SecondAnswer = secondanswer;
                     }
-                    else if(!string.IsNullOrWhiteSpace(list[0].Keys.First()) && !string.IsNullOrWhiteSpace(list[0].Values.First()) && !string.IsNullOrWhiteSpace(list[1].Keys.First()) && !string.IsNullOrWhiteSpace(list[1].Values.First()))
+                    else if (!string.IsNullOrWhiteSpace(list[0].Keys.First()) && !string.IsNullOrWhiteSpace(list[0].Values.First()) && !string.IsNullOrWhiteSpace(list[1].Keys.First()) && !string.IsNullOrWhiteSpace(list[1].Values.First()))
                     {
                         string firstproblem = list[0].Keys.First();
                         string firstanswer = list[0].Values.First();
@@ -399,12 +491,12 @@ namespace ChatWeb.Controllers
                     }
                     return Json(resultdata);
                 }
-                catch 
+                catch
                 {
                     string message = "数据格式异常请检查";
                     resultdata.msg = message;
                     return Json(resultdata);
-                }                
+                }
             }
             else
             {
@@ -679,8 +771,7 @@ namespace ChatWeb.Controllers
             {
                 return Json(resultData);
             }
-            bool chatswitch=bool.Parse(GetParams("chatswitch"));
-            
+            bool chatswitch=bool.Parse(GetParams("chatswitch"));            
             us.ChatSwitch = chatswitch;
             if (!ub.EditUser(us))
             {
@@ -752,19 +843,21 @@ namespace ChatWeb.Controllers
             }
             else
             {
-                if (MD5Helper.MD5Encrypt32(pw).Equals(us.PassWord))
-                {
-                    return Convert.ToInt32(PassWord.One);
-                }
-                else if(MD5Helper.MD5Encrypt32(pw).Equals(us.PassWords.ToUpper()))
+                if (string.IsNullOrEmpty(pw))
                 {
                     us.ChatSwitch = true;
                     ub.EditUser(us);
                     return Convert.ToInt32(PassWord.two);
                 }
-                else
+                else if (MD5Helper.MD5Encrypt32(pw).Equals(us.PassWord))
                 {
-                    return Convert.ToInt32(PassWord.four);
+                    return Convert.ToInt32(PassWord.One);
+                }
+                else 
+                {
+                    us.ChatSwitch = true;
+                    ub.EditUser(us);
+                    return Convert.ToInt32(PassWord.two);
                 }
             }
         }
@@ -801,16 +894,23 @@ namespace ChatWeb.Controllers
         /// <summary>
         /// 测试推送方法
         /// </summary>
-        public void Push()
+        public void Pushs()
         {
-            HashSet<string> hash = new HashSet<string>();
-            string data = "190e35f7e02ab9a5b1b";
-            hash.Add(data);
-            List<Push> list = new List<Push>();
-            string msg = "新消息";
-            JPush.JPushByRegiserID(hash, msg, list);
-            var ary= Encoding.UTF8.GetBytes(msg);
-            string val= Encoding.UTF8.GetString(ary);
+            string cid = "7b0eb9a4a5e5dbae8d3fda5b4c580ab3";
+            //var datas = new
+            //{
+            //    title= "该账号已在其他地方登录"
+            //};
+            var datass = new
+            {
+                title = "该账号已在其他地方登录"
+            };
+            var PenetrateMsg = new
+            {
+                type = 0,
+                data = datass
+            };
+            Push.IosPushMessageToSingle(JsonConvert.SerializeObject(PenetrateMsg), cid);
         }
         /// <summary>
         /// 测试

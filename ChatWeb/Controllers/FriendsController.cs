@@ -75,13 +75,18 @@ namespace ChatWeb.Controllers
             }           
             string loginid = GetParams("loginid");
             Regex r1=new Regex(@"^[1]+[3,5,6,7,8,9]+\d{9}$");
+            Regex r2 = new Regex(@"[A-Za-z0-9\u4e00-\u9fa5]");
+            Regex r3 = new Regex(@"\d{4}");
             if (r1.IsMatch(loginid))
             {
                 user = ub.GetPhoneNumber(loginid);
-            };
-            Regex r2 = new Regex(@"[A-Za-z0-9\u4e00-\u9fa5]");
-            if (r2.IsMatch(loginid))
-            {   
+            }
+            else if(r3.IsMatch(loginid))
+            {
+                user = ub.GetUserById(int.Parse(loginid));
+            }
+            else if (r2.IsMatch(loginid))
+            {             
                 user = ub.GetUserName(loginid);
             }
             if (user != null)
@@ -155,6 +160,7 @@ namespace ChatWeb.Controllers
             us.USearchState = usearchstate;
             if (!ub.EditUser(us))
             {
+                resultData.res = 500;
                 resultData.msg = "设置失败";
                 return Json(resultData);
             }
@@ -183,7 +189,7 @@ namespace ChatWeb.Controllers
                 {
                     user.HeadPortrait = Constant.files + user.HeadPortrait;
                 }
-            }
+            }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
             if (userlist != null)
             {
                 resultData.msg = "查询成功";
@@ -213,11 +219,46 @@ namespace ChatWeb.Controllers
             if (flag)
             {
                 resultData.msg = "成功提交好友申请，请耐心等待";
-            }            
+            }   
+            
             return Json(resultData);
-        }            
+        }
         /// <summary>
-        /// 加载好友请求列表
+        /// 提交好友申请
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult SubmitRequestFriends()
+        {
+            RequestUser();
+            if (resultData.res == 500)
+            {
+                return Json(resultData);
+            }
+            int status = 0;
+            int userid = us.ID;
+            int friendsid = int.Parse(GetParams("friendsid"));
+            string name = GetParams("name");
+            int friendtypeid = int.Parse(GetParams("friendtypeid"));
+            int friendgroupsid = int.Parse(GetParams("friendgroupsid"));
+            DateTime time = DateTime.Now.AddDays(7);
+            bool flag = ub.AddFirend(userid, friendsid, name, friendtypeid, friendgroupsid, status, time);          
+            if (flag)
+            {
+                resultData.msg = "成功提交好友申请，请耐心等待";
+            }
+            var user = new
+            {
+                ID=userid,
+                LoginID=us.LoginID,
+                HeadPortrait= Constant.files + us.HeadPortrait,
+            };
+            int State = 1;
+            int messagetypeid = 5;
+            Chat.AddNewFriends(user, messagetypeid, State, friendsid);
+            return Json(resultData);
+        }
+        /// <summary>
+        /// 加载好友申请列表
         /// </summary>
         /// <returns></returns>
         public JsonResult RequestListFriend()
@@ -251,6 +292,42 @@ namespace ChatWeb.Controllers
                 resultData.msg = "当前用户没有好友申请";
             }
             return Json(resultData);
+        }
+        /// <summary>
+        /// 加载好友请求列表
+        /// </summary>
+        public JsonResult GetFriends()
+        {
+            RequestUser();
+            if (resultData.res == 500)
+            {
+                return Json(resultData);
+            }
+            int userid = us.ID;
+            List<FriendState> userlist = ub.QueryFriendRequest(userid);
+            if (userlist.Count != 0)
+            {
+                DateTime time = DateTime.Now;
+                foreach (var temp in userlist)
+                {
+                    int state = 0;
+                    if (temp.endtime > time)
+                    {
+                        state = 1;
+                    }
+                    temp.user.HeadPortrait = Constant.files + temp.user.HeadPortrait;
+                    temp.State = state;
+                }
+                resultData.msg = "已成功找到当前用户的好友请求列表";
+                resultData.data = userlist;
+            }
+            else
+            {
+                resultData.res = 500;
+                resultData.msg = "当前用户没有好友请求";
+            }
+            return Json(resultData);
+
         }
         /// <summary>
         /// 删除过期的用户请求数据,每个月月底删除一次

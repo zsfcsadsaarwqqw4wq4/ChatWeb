@@ -146,5 +146,22 @@ namespace BLL
         {
             ud.UpdateUser(userid, time);
         }
+        /// <summary>
+        /// 查询用户好友请求记录
+        /// </summary>
+        /// <param name="Userid"></param>
+        /// <returns></returns>
+        public List<FriendState> QueryFriendRequest(int userid)
+        {
+            return ud.QueryFriendRequest(userid);
+        }
+        /// <summary>
+        /// 设置用户的迷惑密码
+        /// </summary>
+        /// <returns></returns>
+        public bool EditChatSwitch(int id)
+        {
+            return ud.EditChatSwitch(id);
+        }
     }
 }

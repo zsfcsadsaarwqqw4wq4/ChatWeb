@@ -315,7 +315,7 @@
           <Property Name="ThemeTypeID" Type="int" />
           <Property Name="SecondThemeTypeID" Type="int" />
           <Property Name="IsEnterSendMsg" Type="bit" />
-          <Property Name="ChatSwitch" Type="bit" />
+          <Property Name="ChatSwitch" Type="bit" Nullable="false" />
           <Property Name="LastLoginAt" Type="datetime" />
         </EntityType>
         <EntityType Name="UserPay">
@@ -716,7 +716,7 @@
           <Property Name="ThemeTypeID" Type="Int32" />
           <Property Name="SecondThemeTypeID" Type="Int32" />
           <Property Name="IsEnterSendMsg" Type="Boolean" />
-          <Property Name="ChatSwitch" Type="Boolean" />
+          <Property Name="ChatSwitch" Type="Boolean" Nullable="false" />
           <Property Name="LastLoginAt" Type="DateTime" Precision="3" />
         </EntityType>
         </Schema>
