@@ -84,9 +84,9 @@ namespace BLL
         /// 申请好友
         /// </summary>
         /// <returns></returns>
-        public bool AddFirend(int userid, int friendsid, string name, int friendtypeid, int friendgroupsid, int status,DateTime time)
+        public bool AddFirend(int userid, int friendsid, string name, int friendtypeid, int friendgroupsid, int status,DateTime time,string notes)
         {
-            return ud.AddFirend(userid, friendsid, name, friendtypeid, friendgroupsid, status, time);
+            return ud.AddFirend(userid, friendsid, name, friendtypeid, friendgroupsid, status, time, notes);
         }
         /// <summary>
         /// 通过好友申请

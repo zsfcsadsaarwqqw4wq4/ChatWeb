@@ -12,7 +12,6 @@
         <EntityTypeShape EntityType="ChatModel.ChatLevel" Width="1.5" PointX="4.75" PointY="4.75" />
         <EntityTypeShape EntityType="ChatModel.City" Width="1.5" PointX="6.75" PointY="0.75" />
         <EntityTypeShape EntityType="ChatModel.FriendGroups" Width="1.5" PointX="6.75" PointY="3.75" />
-        <EntityTypeShape EntityType="ChatModel.Friends" Width="1.5" PointX="6.75" PointY="6.75" />
         <EntityTypeShape EntityType="ChatModel.FriendshipPolicy" Width="1.5" PointX="8.75" PointY="0.75" />
         <EntityTypeShape EntityType="ChatModel.FriendType" Width="1.5" PointX="0.75" PointY="8.75" />
         <EntityTypeShape EntityType="ChatModel.Groups" Width="1.5" PointX="2.75" PointY="8.75" />
@@ -35,6 +34,7 @@
         <EntityTypeShape EntityType="ChatModel.AgentPower" Width="1.5" PointX="9.375" PointY="13.75" />
         <EntityTypeShape EntityType="ChatModel.UID" Width="1.5" PointX="15.375" PointY="0.75" />
         <EntityTypeShape EntityType="ChatModel.User" Width="1.5" PointX="15.375" PointY="3.75" />
+        <EntityTypeShape EntityType="ChatModel.Friends" Width="1.5" PointX="11.375" PointY="15.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

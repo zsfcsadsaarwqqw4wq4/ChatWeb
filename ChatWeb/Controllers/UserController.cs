@@ -75,9 +75,10 @@ namespace ChatWeb.Controllers
                     }
                     obj = JObject.Parse(json);
                 }
-                string password=MD5Helper.MD5Encrypt32(obj["password"].ToString());             
+                string pw = obj["password"].ToString();
+                string password=MD5Helper.MD5Encrypt32(pw);             
                 string loginid = obj["loginid"].ToString();
-                Regex r1 = new Regex(@"^[a-zA-Z-0-9]{3,16}");
+                Regex r1 = new Regex(@"^[a-zA-Z0-9_\u4e00-\u9fa5]{4,16}$");
                 User user = new User();
                 if (r1.IsMatch(loginid))
                 {
@@ -222,6 +223,12 @@ namespace ChatWeb.Controllers
                     obj = JObject.Parse(json);
                 }
                 string loginid=obj["loginid"].ToString();
+                Regex r1 = new Regex(@"^[a-zA-Z0-9_\u4e00-\u9fa5]{4,16}$");
+                if (!r1.IsMatch(loginid))
+                {
+                    resultUser.msg = "用户名格式不对";
+                    return Json(resultUser);
+                }
                 bool msg = ub.GetUserIsRegister(loginid);
                 if(msg)
                 {
@@ -244,6 +251,7 @@ namespace ChatWeb.Controllers
                     resultUser.msg = "邀请码已过期";
                     return Json(resultUser);
                 }
+                var password = obj["password"].ToString();
                 dynamic push = JsonConvert.DeserializeObject(obj["push"].ToString());
                 string token = push.token;
                 string clientid = push.clientid;
@@ -259,7 +267,7 @@ namespace ChatWeb.Controllers
                     int result = random.Next(2, 8);
                     User user = new User();
                     user.LoginID = loginid;                   
-                    user.PassWord = MD5Helper.MD5Encrypt32(obj["password"].ToString());
+                    user.PassWord = MD5Helper.MD5Encrypt32(password);
                     user.HeadPortrait = "/Images/head/" + result +".jpg";
                     user.PSearchState = false;
                     user.USearchState = true;

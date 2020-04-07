@@ -164,7 +164,7 @@ namespace ChatWeb
         /// </summary>
         /// <param name="uid">接收者id</param>
         /// <param name="msg">发送的消息</param>
-        public static void SendMsgToUser(int userid, string loginid,int uid, string msg,string guid,int messagestypeid,bool isBART,object res,dynamic flasedata)
+        public static void SendMsgToUser(int userid, string loginid,int uid, string msg,string guid,int messagestypeid,bool isBART,object res,dynamic flasedata,bool flag)
         {
             //发送成功，返回给所有目标用户
             CONNECT_TMP_POOL = new Dictionary<int, WebSocket>(CONNECT_POOL);
@@ -210,7 +210,7 @@ namespace ChatWeb
                 }
                 if (Convert.ToBoolean(users.ChatSwitch))
                 {
-                    msgs = msg;
+                    msgs = "私聊消息";
                 }
                 else
                 {
@@ -220,11 +220,20 @@ namespace ChatWeb
                 {
                     if (flasedata != null)
                     {
-                        Push.PushMessageToSingle(flasedata.content, JsonConvert.SerializeObject(res), token);
+                        string title = flasedata.title;
+                        string content = flasedata.content;
+                        Push.PushMessageToSingle(title,content, JsonConvert.SerializeObject(res), token);
                     }
                     else
                     {
-                        Push.PushMessageToSingle(msgs, JsonConvert.SerializeObject(res), token);
+                        if (flag)
+                        {
+                            Push.PushMessageToSingle(loginid, "阅后即焚", JsonConvert.SerializeObject(res), token);
+                        }
+                        else
+                        {
+                            Push.PushMessageToSingle(loginid, msgs, JsonConvert.SerializeObject(res), token);
+                        }
                     }
                 }
                 if ("2".Equals(device))
@@ -237,7 +246,14 @@ namespace ChatWeb
                     }
                     else
                     {
-                        Push.APNsPushToSingle(loginid, msgs, token, res);
+                        if (flag)
+                        {
+                            Push.APNsPushToSingle(loginid, "阅后即焚", token, res);
+                        }
+                        else
+                        {
+                            Push.APNsPushToSingle(loginid, msgs, token, res);
+                        }
                     }
                 }
                 DateTime time = DateTime.Now;                
@@ -489,17 +505,23 @@ namespace ChatWeb
                     token = datas["token"].ToString();
                     device = datas["device"].ToString();
                 }
-                //if ("1".Equals(device))
-                //{
-                //    if (flasedata != null)
-                //    {
-                //        Push.PushMessageToSingle(flasedata.content, JsonConvert.SerializeObject(res), token);
-                //    }
-                //    else
-                //    {
-                //        Push.PushMessageToSingle(msgs, JsonConvert.SerializeObject(res), token);
-                //    }
-                //}
+                if ("1".Equals(device))
+                {
+                    var res = new
+                    {
+                        userid = userid,
+                        uid = uid,
+                        img = img
+                    };
+                    if (flasedata != null)
+                    {
+                        Push.PushMessageToSingle(flasedata.title, "这是一条回复[图片]吧", JsonConvert.SerializeObject(res), token);
+                    }
+                    else
+                    {
+                        Push.PushMessageToSingle(loginid, "[图片]", JsonConvert.SerializeObject(res), token);
+                    }
+                }
                 if ("2".Equals(device))
                 {
                     var res = new

@@ -228,7 +228,7 @@ namespace Model
             /// 表示当前用户的下级的下级代理用户信息
             /// </summary>
             //public List<User> ChildChildAgent { get; set; }
-            public List<ChildUser> ChilDren { get; set; }
+            public List<ChildUser> Children { get; set; }
         }
         public class ChildUser
         {

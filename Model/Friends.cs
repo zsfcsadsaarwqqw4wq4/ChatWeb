@@ -22,5 +22,6 @@ namespace Model
         public Nullable<int> FriendGroupsID { get; set; }
         public int Status { get; set; }
         public System.DateTime OverdueTime { get; set; }
+        public string Notes { get; set; }
     }
 }

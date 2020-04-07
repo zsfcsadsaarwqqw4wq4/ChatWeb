@@ -98,6 +98,7 @@
           <Property Name="FriendGroupsID" Type="int" />
           <Property Name="Status" Type="int" Nullable="false" />
           <Property Name="OverdueTime" Type="datetime" Nullable="false" />
+          <Property Name="Notes" Type="nvarchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="FriendshipPolicy">
           <Key>
@@ -198,6 +199,8 @@
           <Property Name="ToUserID" Type="int" />
           <Property Name="Status" Type="int" />
           <Property Name="GUID" Type="nvarchar" MaxLength="50" />
+          <Property Name="Type" Type="int" />
+          <Property Name="ImgBase64" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="MessagesStillType">
           <Key>
@@ -372,7 +375,6 @@
           <EntitySet Name="ChatLevel" EntityType="ChatModel.ChatLevel" />
           <EntitySet Name="City" EntityType="ChatModel.City" />
           <EntitySet Name="FriendGroups" EntityType="ChatModel.FriendGroups" />
-          <EntitySet Name="Friends" EntityType="ChatModel.Friends" />
           <EntitySet Name="FriendshipPolicy" EntityType="ChatModel.FriendshipPolicy" />
           <EntitySet Name="FriendType" EntityType="ChatModel.FriendType" />
           <EntitySet Name="Groups" EntityType="ChatModel.Groups" />
@@ -395,6 +397,7 @@
           <EntitySet Name="AgentPower" EntityType="ChatModel.AgentPower" />
           <EntitySet Name="UID" EntityType="ChatModel.UID" />
           <EntitySet Name="User" EntityType="ChatModel.User" />
+          <EntitySet Name="Friends" EntityType="ChatModel.Friends" />
         </EntityContainer>
         <EntityType Name="Agent">
           <Key>
@@ -463,19 +466,6 @@
           <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="UserID" Type="Int32" Nullable="false" />
-        </EntityType>
-        <EntityType Name="Friends">
-          <Key>
-            <PropertyRef Name="ID" />
-          </Key>
-          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FirendID" Type="Int32" Nullable="false" />
-          <Property Name="UserID" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="FriendTypeID" Type="Int32" />
-          <Property Name="FriendGroupsID" Type="Int32" />
-          <Property Name="Status" Type="Int32" Nullable="false" />
-          <Property Name="OverdueTime" Type="DateTime" Nullable="false" Precision="3" />
         </EntityType>
         <EntityType Name="FriendshipPolicy">
           <Key>
@@ -576,6 +566,8 @@
           <Property Name="ToUserID" Type="Int32" />
           <Property Name="Status" Type="Int32" />
           <Property Name="GUID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Type" Type="Int32" />
+          <Property Name="ImgBase64" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="MessagesStillType">
           <Key>
@@ -719,6 +711,20 @@
           <Property Name="ChatSwitch" Type="Boolean" Nullable="false" />
           <Property Name="LastLoginAt" Type="DateTime" Precision="3" />
         </EntityType>
+        <EntityType Name="Friends">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirendID" Type="Int32" Nullable="false" />
+          <Property Name="UserID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FriendTypeID" Type="Int32" />
+          <Property Name="FriendGroupsID" Type="Int32" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="OverdueTime" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Notes" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -796,20 +802,6 @@
               <MappingFragment StoreEntitySet="FriendGroups">
                 <ScalarProperty Name="UserID" ColumnName="UserID" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Friends">
-            <EntityTypeMapping TypeName="ChatModel.Friends">
-              <MappingFragment StoreEntitySet="Friends">
-                <ScalarProperty Name="OverdueTime" ColumnName="OverdueTime" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="FriendGroupsID" ColumnName="FriendGroupsID" />
-                <ScalarProperty Name="FriendTypeID" ColumnName="FriendTypeID" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="UserID" ColumnName="UserID" />
-                <ScalarProperty Name="FirendID" ColumnName="FirendID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -912,6 +904,8 @@
           <EntitySetMapping Name="Messages">
             <EntityTypeMapping TypeName="ChatModel.Messages">
               <MappingFragment StoreEntitySet="Messages">
+                <ScalarProperty Name="ImgBase64" ColumnName="ImgBase64" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
                 <ScalarProperty Name="GUID" ColumnName="GUID" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="ToUserID" ColumnName="ToUserID" />
@@ -1074,6 +1068,21 @@
                 <ScalarProperty Name="PassWord" ColumnName="PassWord" />
                 <ScalarProperty Name="NickeName" ColumnName="NickeName" />
                 <ScalarProperty Name="LoginID" ColumnName="LoginID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Friends">
+            <EntityTypeMapping TypeName="ChatModel.Friends">
+              <MappingFragment StoreEntitySet="Friends">
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="OverdueTime" ColumnName="OverdueTime" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="FriendGroupsID" ColumnName="FriendGroupsID" />
+                <ScalarProperty Name="FriendTypeID" ColumnName="FriendTypeID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="FirendID" ColumnName="FirendID" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>

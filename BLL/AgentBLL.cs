@@ -46,5 +46,14 @@ namespace BLL
         {
             return ad.QueryParentAgent(uid);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns></returns>
+        public object AgentCount(int userid)
+        {
+            return ad.AgentCount(userid);
+        }
     }
 }

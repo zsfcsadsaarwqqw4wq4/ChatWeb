@@ -288,12 +288,13 @@ namespace DAL
         /// <param name="firendid"></param>
         /// <param name="status"></param>
         /// <returns></returns>
-        public bool AddFirend(int userid, int friendsid, string name, int friendtypeid, int friendgroupsid, int status,DateTime time)
+        public bool AddFirend(int userid, int friendsid, string name, int friendtypeid, int friendgroupsid, int status,DateTime time,string notes)
         {
             using (ChatEntities db = new ChatEntities())
             {
                 Friends friend = new Friends();
                 friend.UserID = userid;
+                friend.Notes = notes;
                 friend.Status = status;
                 friend.FirendID = friendsid;
                 friend.Name = name;

@@ -12,9 +12,9 @@ namespace Common
     {
         public enum ThemeEnum
         {
-            [Description("贴吧主题")]//描述
+            [Description("贴吧")]//描述
             System = 1,
-            [Description("Word主题")]
+            [Description("Word")]
             Procurement = 2,
             [Description("其他主题")]
             FixedAssets = 3

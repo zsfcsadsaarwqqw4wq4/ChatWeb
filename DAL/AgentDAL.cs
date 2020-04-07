@@ -91,6 +91,16 @@ namespace DAL
             }
         }
         /// <summary>
+        /// 统计当前用户的下级或下下级人数
+        /// </summary>
+        public void GetAgents()
+        {
+            using (ChatEntities db=new ChatEntities())
+            {
+                
+            }
+        }
+        /// <summary>
         /// 获取当前用户的代理关系
         /// </summary>
         /// <returns></returns>
@@ -180,12 +190,37 @@ namespace DAL
                             }
                             childuserlist.Add(childuser);
                         }
-                        agentmodel.ChilDren= childuserlist;
+                        agentmodel.Children= childuserlist;
                     }
                 
 
                 }
                 return agentmodel;
+            }
+        }
+        /// <summary>
+        /// 统计代理总数
+        /// </summary>
+        /// <returns></returns>
+        public object AgentCount(int userid)
+        {
+            using (ChatEntities db=new ChatEntities())
+            {
+                List<Agent> firstagent=db.Agent.Where(o => o.ParentID == userid).ToList();
+                int firstcount = firstagent.Count;
+                int data = 0;
+                int secondcount = 0;
+                foreach(var item in firstagent)
+                {
+                    int res = db.Agent.Where(o => o.ParentID == item.UserID).ToList().Count;
+                    secondcount = data + res;
+                }
+                var datas = new
+                {
+                    firstcount= firstcount,
+                    secondcount= secondcount
+                };
+                return datas;
             }
         }
     }

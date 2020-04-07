@@ -21,21 +21,21 @@ namespace ChatWeb.Controllers
         /// <summary>
         /// 查询当前用户分红比例，如果没有分红比例代表该用户没有分红的权利
         /// </summary>
-        public JsonResult SetAgentPercent(int uid)
+        public JsonResult SetAgentPercent(int userid)
         {
             RequestUser();
             if (resultData.res == 500)
             {
                 return Json(resultData);
             }
-            int res= ab.QueryParentAgent(uid);
+            int res= ab.QueryParentAgent(userid);
             if (res != 1)
             {
                 Agent agent = ab.GetAgent(res);
                 AgentPower ap = apb.Get(agent.UserID);
                 if (ap.BChildChildMoney)
                 {
-                    var Data=agb.GetPercent(uid);
+                    var Data=agb.GetPercent(userid);
                     if (Data!=null)
                     {
                         resultData.res = 200;

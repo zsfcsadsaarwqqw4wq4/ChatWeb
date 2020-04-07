@@ -87,6 +87,7 @@ namespace ChatWeb.Controllers
         [HttpPost]
         public JsonResult SendMsg()
         {
+            bool flags = false;
             RequestUser();
             if (resultData.res == 500)
             {
@@ -139,11 +140,19 @@ namespace ChatWeb.Controllers
             if (users.ChatSwitch)
             {
                 flasedata = datas;
-                Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART, data, flasedata);
+                Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART, data, flasedata, flags);
             }
             else
             {
-                Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART, data, flasedata);
+                if (us.BurnAfterReading)
+                {
+                    flag = true;
+                    Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART, data, flasedata, flags);
+                }
+                else
+                {
+                    Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART, data, flasedata, flags);
+                }
             }
             return Json(resultdata);
         }
@@ -917,7 +926,7 @@ namespace ChatWeb.Controllers
         /// </summary>
         public void SetString()
         {
-            Redis redis=new Redis();
+            Redis redis=new Redis();            
             string key = "loginid";
             string password = "admin";
             User users=new User();

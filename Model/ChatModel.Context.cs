@@ -32,7 +32,6 @@ namespace Model
         public virtual DbSet<ChatLevel> ChatLevel { get; set; }
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<FriendGroups> FriendGroups { get; set; }
-        public virtual DbSet<Friends> Friends { get; set; }
         public virtual DbSet<FriendshipPolicy> FriendshipPolicy { get; set; }
         public virtual DbSet<FriendType> FriendType { get; set; }
         public virtual DbSet<Groups> Groups { get; set; }
@@ -55,5 +54,6 @@ namespace Model
         public virtual DbSet<AgentPower> AgentPower { get; set; }
         public virtual DbSet<UID> UID { get; set; }
         public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<Friends> Friends { get; set; }
     }
 }

@@ -52,12 +52,12 @@ namespace ChatWeb
             ////批量单推
             //singleBatchDemo();
         }
-        public static void PushMessageToSingle(string content, string data,string cid)
+        public static void PushMessageToSingle(string title,string content, string data,string cid)
         {
 
             IGtPush push = new IGtPush(HOST, APPKEY, MASTERSECRET);
             //消息模版：TransmissionTemplate:透传模板
-            var template = NotificationTemplateDemo(content, data);
+            var template = NotificationTemplateDemo(title,content, data);
             // 单推消息模型
 
             SingleMessage message = new SingleMessage();
@@ -83,13 +83,13 @@ namespace ChatWeb
         }
 
         //通知透传模板动作内容
-        public static NotificationTemplate NotificationTemplateDemo(string content,string data)
+        public static NotificationTemplate NotificationTemplateDemo(string title,string content,string data)
         {
             NotificationTemplate template = new NotificationTemplate();
             template.AppId = APPID;
             template.AppKey = APPKEY;
             //通知栏标题
-            template.Title = "";
+            template.Title = title;
             //通知栏内容     
             template.Text = content;
             //通知栏显示本地图片

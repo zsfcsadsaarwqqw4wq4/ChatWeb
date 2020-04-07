@@ -23,5 +23,7 @@ namespace Model
         public Nullable<int> ToUserID { get; set; }
         public Nullable<int> Status { get; set; }
         public string GUID { get; set; }
+        public Nullable<int> Type { get; set; }
+        public string ImgBase64 { get; set; }
     }
 }

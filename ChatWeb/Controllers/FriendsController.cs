@@ -42,9 +42,10 @@ namespace ChatWeb.Controllers
             string name = GetParams("name");
             int friendtypeid = int.Parse(GetParams("friendtypeid"));
             int friendgroupsid = int.Parse(GetParams("friendgroupsid"));
+            string notes = GetParams("notes");
             int status = 0;
             DateTime time = DateTime.Now.AddDays(7);           
-            bool flag = ub.AddFirend(userid, friendsid, name, friendtypeid, friendgroupsid, status, time);
+            bool flag = ub.AddFirend(userid, friendsid, name, friendtypeid, friendgroupsid, status, time, notes);
             if (!flag)
             {
                 resultData.res = 500;
@@ -201,28 +202,28 @@ namespace ChatWeb.Controllers
         /// 提交好友申请
         /// </summary>
         /// <returns></returns>
-        public JsonResult RequestFriends()
-        {
-            RequestUser();
-            if (resultData.res == 500)
-            {
-                return Json(resultData);
-            }
-            int status = 0;
-            int userid = us.ID;
-            int friendsid=int.Parse(GetParams("friendsid"));            
-            string name = GetParams("name");
-            int friendtypeid = int.Parse(GetParams("friendtypeid"));
-            int friendgroupsid = int.Parse(GetParams("friendgroupsid"));
-            DateTime time = DateTime.Now.AddDays(7);
-            bool flag=ub.AddFirend(userid, friendsid, name, friendtypeid, friendgroupsid, status, time);           
-            if (flag)
-            {
-                resultData.msg = "成功提交好友申请，请耐心等待";
-            }   
+        //public JsonResult RequestFriends()
+        //{
+        //    RequestUser();
+        //    if (resultData.res == 500)
+        //    {
+        //        return Json(resultData);
+        //    }
+        //    int status = 0;
+        //    int userid = us.ID;
+        //    int friendsid=int.Parse(GetParams("friendsid"));            
+        //    string name = GetParams("name");
+        //    int friendtypeid = int.Parse(GetParams("friendtypeid"));
+        //    int friendgroupsid = int.Parse(GetParams("friendgroupsid"));
+        //    DateTime time = DateTime.Now.AddDays(7);
+        //    bool flag=ub.AddFirend(userid, friendsid, name, friendtypeid, friendgroupsid, status, time);           
+        //    if (flag)
+        //    {
+        //        resultData.msg = "成功提交好友申请，请耐心等待";
+        //    }   
             
-            return Json(resultData);
-        }
+        //    return Json(resultData);
+        //}
         /// <summary>
         /// 提交好友申请
         /// </summary>
@@ -240,8 +241,9 @@ namespace ChatWeb.Controllers
             string name = GetParams("name");
             int friendtypeid = int.Parse(GetParams("friendtypeid"));
             int friendgroupsid = int.Parse(GetParams("friendgroupsid"));
+            string notes = GetParams("notes");
             DateTime time = DateTime.Now.AddDays(7);
-            bool flag = ub.AddFirend(userid, friendsid, name, friendtypeid, friendgroupsid, status, time);          
+            bool flag = ub.AddFirend(userid, friendsid, name, friendtypeid, friendgroupsid, status, time, notes);          
             if (flag)
             {
                 resultData.msg = "成功提交好友申请，请耐心等待";
