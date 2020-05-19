@@ -21,7 +21,6 @@ namespace DAL
             {
                 User user = db.User.SingleOrDefault(u => u.LoginID==us.LoginID);
                 return user;
-
             }
         }
         //根据ID查询用户信息
@@ -124,6 +123,7 @@ namespace DAL
                 us.IsEnterSendMsg = user.IsEnterSendMsg;
                 us.ChatSwitch = user.ChatSwitch;
                 us.LastLoginAt=user.LastLoginAt;
+                us.SearchStateId = user.SearchStateId;
                 return db.SaveChanges() > 0;
             }
         }

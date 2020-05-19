@@ -92,6 +92,9 @@
     <Reference Include="Microsoft.Owin.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.Security.4.0.0\lib\net451\Microsoft.Owin.Security.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
@@ -195,9 +198,6 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.4\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
@@ -233,6 +233,7 @@
       <DependentUpon>Chat.ashx</DependentUpon>
     </Compile>
     <Compile Include="Controllers\AgentController.cs" />
+    <Compile Include="Controllers\AgentMoneyController.cs" />
     <Compile Include="Controllers\AgentPercentController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
@@ -364,6 +365,8 @@
     <Content Include="assets\js\UploadFiles\js\eu.js" />
     <Content Include="assets\js\Viewers\viewer.css" />
     <Content Include="assets\js\Viewers\viewer.js" />
+    <Content Include="assets\js\vue.js" />
+    <Content Include="assets\js\vue.min.js" />
     <Content Include="assets\js\xSocket.js" />
     <Content Include="assets\js\zyUpload\css\zyUpload.css" />
     <Content Include="assets\js\zyUpload\js\zyFile.js" />
@@ -481,7 +484,9 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -517,6 +522,7 @@
     <Folder Include="assets\js\tipso\js\" />
     <Folder Include="Images\Logo\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\AgentMoney\" />
     <Folder Include="Views\AgentPercent\" />
     <Folder Include="Views\Agent\" />
     <Folder Include="Views\Base\" />

@@ -27,7 +27,6 @@ namespace Model
     
         public virtual DbSet<Agent> Agent { get; set; }
         public virtual DbSet<AgentMoney> AgentMoney { get; set; }
-        public virtual DbSet<AgentPercent> AgentPercent { get; set; }
         public virtual DbSet<AgentPerModel> AgentPerModel { get; set; }
         public virtual DbSet<ChatLevel> ChatLevel { get; set; }
         public virtual DbSet<City> City { get; set; }
@@ -53,7 +52,8 @@ namespace Model
         public virtual DbSet<UserPay> UserPay { get; set; }
         public virtual DbSet<AgentPower> AgentPower { get; set; }
         public virtual DbSet<UID> UID { get; set; }
-        public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Friends> Friends { get; set; }
+        public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<AgentPercent> AgentPercent { get; set; }
     }
 }

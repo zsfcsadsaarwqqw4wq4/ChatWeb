@@ -32,6 +32,21 @@ namespace ChatWeb.App_Start
             }
         }
         /// <summary>
+        /// 使用多个多个redis服务器，均衡负载项目
+        /// </summary>
+        /// <param name="readWriteHosts"></param>
+        /// <param name="readOnlyHosts"></param>
+        /// <returns></returns>
+        public static PooledRedisClientManager CreateManager(string[] readWriteHosts,string[] readOnlyHosts)
+        {
+            //支持读写分离，均衡负债
+            return new PooledRedisClientManager(readWriteHosts, readOnlyHosts, new RedisClientManagerConfig {
+                MaxReadPoolSize = 10,//读取最大连接数
+                MaxWritePoolSize = 10,//写入最大连接数
+                AutoStart = true
+            });
+        }
+        /// <summary>
         /// 保存一个对象，该对象会被序列化并设置过期时间,Set方法会自动将对象序列化成一个string类型的json字符串
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -59,9 +74,9 @@ namespace ChatWeb.App_Start
         {
             //创建Redis连接对象
             using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
-            {
+            {               
                 //存放string类型数据到内存中
-                bool res = redisclient.Set(key, value);
+                bool res = redisclient.Set<T>(key, value);
                 return res;
             }
         }
@@ -144,7 +159,6 @@ namespace ChatWeb.App_Start
             //创建Redis连接对象
             using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
             {
-
                 //存放string类型数据到内存中
                 string res = redisclient.Get<string>(key);
                 return res;
@@ -171,8 +185,71 @@ namespace ChatWeb.App_Start
         {
             using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
             {
-                //value.ForEach(x => redisclient.AddItemToList(key, x));
-                redisclient.AddRangeToList(key, value);
+                redisclient.AddRangeToList(key,value);
+            }
+        }
+        /// <summary>
+        /// 获取所有list列表
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public List<string> GetList(string key)
+        {
+            using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
+            {
+                return redisclient.GetAllItemsFromList(key);
+            }
+        }
+        /// <summary>
+        /// 根据key和index索引对应的数据
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public string GetIndexItem(string key,int index)
+        {
+            using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
+            {
+                var item = redisclient.GetItemFromList(key, index);
+                return item;
+            }
+        }
+        /// <summary>
+        /// 删除指定集合
+        /// </summary>
+        /// <param name="key">需要删除的集合名</param>
+        public void ClearAll(string key)
+        {
+            using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
+            {
+                var list = redisclient.Lists[key];
+                list.Clear();
+            }
+        }
+        /// <summary>
+        /// 删除指定key的值
+        /// </summary>
+        /// <param name="key">需要删除的集合名</param>
+        /// <param name="value">集合指定的key</param>
+        public void Remove(string key,string value)
+        {
+            using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
+            {
+                var list = redisclient.Lists[key];
+                list.Remove(value);
+            }
+        }
+        /// <summary>
+        /// 删除指定索引的值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="index"></param>
+        public void RemoveAt(string key,int index)
+        {
+            using (RedisClient redisclient = new RedisClient(RedisPath, RedisPort, "123456"))
+            {
+                var list = redisclient.Lists[key];
+                list.RemoveAt(index);
             }
         }
     }

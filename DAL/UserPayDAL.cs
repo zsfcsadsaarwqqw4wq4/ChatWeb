@@ -69,6 +69,26 @@ namespace DAL
                 return db.SaveChanges() > 0;              
             }
         }
+        /// <summary>
+        /// 查询用户的总充值金额
+        /// </summary>
+        /// <returns></returns>
+        public decimal GetAgentMoney(int userid)
+        {
+            using (ChatEntities db=new ChatEntities())
+            {
+                var query = (from a in db.UserPay
+                             where a.UserID == userid
+                             select a.PayMoney
+                           ).ToList();
+                decimal res = 0;
+                foreach (var item in query)
+                {
+                    res = res + item;
+                }
+                return res;
+            }
+        }
 
     }
 }

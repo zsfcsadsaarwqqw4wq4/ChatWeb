@@ -55,5 +55,23 @@ namespace BLL
         {
             return ad.AgentCount(userid);
         }
+        /// <summary>
+        /// 查询用户代理等级
+        /// </summary>
+        /// <param name="userid">用户id</param>
+        /// <returns></returns>
+        public int AgentLevel(int userid)
+        {
+            return ad.AgentLevel(userid);
+        }
+        /// <summary>
+        /// 查询当前用户的一级子代理
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns></returns>
+        public List<Agent> GetChildAgent(int userid)
+        {
+            return ad.GetChildAgent(userid);
+        }
     }
 }

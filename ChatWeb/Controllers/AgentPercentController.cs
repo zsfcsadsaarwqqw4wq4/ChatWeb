@@ -23,26 +23,14 @@ namespace ChatWeb.Controllers
         /// </summary>
         public JsonResult SetAgentPercent(int userid)
         {
-            RequestUser();
-            if (resultData.res == 500)
-            {
-                return Json(resultData);
-            }
             int res= ab.QueryParentAgent(userid);
             if (res != 1)
             {
                 Agent agent = ab.GetAgent(res);
-                AgentPower ap = apb.Get(agent.UserID);
+                var ap = apb.Get(agent.UserID);
                 if (ap.BChildChildMoney)
                 {
-                    var Data=agb.GetPercent(userid);
-                    if (Data!=null)
-                    {
-                        resultData.res = 200;
-                        resultData.msg = "成功找到当前的代理关系";
-                        resultData.data = Data;
-                        return Json(resultData);
-                    }
+
                 }
             }
             else
@@ -64,7 +52,6 @@ namespace ChatWeb.Controllers
             {
                 return Json(resultData);
             }
-            agb.GetPercent(us.ID);
             return Json(new { });
         }
     }

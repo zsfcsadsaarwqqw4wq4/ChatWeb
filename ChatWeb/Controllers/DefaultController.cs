@@ -146,7 +146,7 @@ namespace ChatWeb.Controllers
             {
                 if (us.BurnAfterReading)
                 {
-                    flag = true;
+                    flags = true;
                     Chat.SendMsgToUser(userid, loginid, uid, msg, guid, messagestypeid, isBART, data, flasedata, flags);
                 }
                 else
@@ -284,7 +284,6 @@ namespace ChatWeb.Controllers
                 {
                     title = title,
                     content = content
-
                 };
                 if (users.ChatSwitch)
                 {
@@ -933,7 +932,51 @@ namespace ChatWeb.Controllers
             users.LoginID = "hehehe";
             users.Name = "小张";
             bool res=redis.StringSet<User>("user", users);
-        }       
+        }   
+        public void SendMsgs()
+        {
+            int res = int.Parse(Request["res"]);
+            int userid = int.Parse(Request["userid"]);
+            string loginid = Request["loginid"];
+            int uid = int.Parse(Request["uid"]);
+            int messagestypeid = int.Parse(Request["messagestypeid"]);
+            bool isBART = bool.Parse(Request["isBART"]);
+            var data = new
+            {
+                userid = userid,
+                loginid = loginid,
+                uid = uid,
+            };
+            var datas = new
+            {
+                title = "标题",
+                content = "内容"
+            };
+            for (int i= 0;i<res;i++)
+            {
+                Chat.SendMsgToUser(userid, loginid, uid, EncodeBase64(i.ToString()), i.ToString(), messagestypeid, isBART, data, datas, false);
+            }
+        }
+        /// <summary>
+        /// base64编码
+        /// </summary>
+        /// <param name="code_type"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        public static string EncodeBase64(string code)
+        {
+            string encode = "";
+            byte[] bytes = Encoding.UTF8.GetBytes(code);
+            try
+            {
+                encode = Convert.ToBase64String(bytes);
+            }
+            catch
+            {
+                encode = code;
+            }
+            return encode;
+        }
         /// <summary>
         /// 获取压缩后的文件流 
         /// </summary>

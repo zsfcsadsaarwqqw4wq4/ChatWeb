@@ -7,7 +7,6 @@
       <Diagram DiagramId="72df843fb32046119be496e16fd7cb8f" Name="Diagram1">
         <EntityTypeShape EntityType="ChatModel.Agent" Width="1.5" PointX="0.75" PointY="0.75" />
         <EntityTypeShape EntityType="ChatModel.AgentMoney" Width="1.5" PointX="2.75" PointY="0.75" />
-        <EntityTypeShape EntityType="ChatModel.AgentPercent" Width="1.5" PointX="4.75" PointY="0.75" />
         <EntityTypeShape EntityType="ChatModel.AgentPerModel" Width="1.5" PointX="0.75" PointY="4.75" />
         <EntityTypeShape EntityType="ChatModel.ChatLevel" Width="1.5" PointX="4.75" PointY="4.75" />
         <EntityTypeShape EntityType="ChatModel.City" Width="1.5" PointX="6.75" PointY="0.75" />
@@ -33,8 +32,9 @@
         <EntityTypeShape EntityType="ChatModel.UserPay" Width="1.5" PointX="6.75" PointY="13.75" />
         <EntityTypeShape EntityType="ChatModel.AgentPower" Width="1.5" PointX="9.375" PointY="13.75" />
         <EntityTypeShape EntityType="ChatModel.UID" Width="1.5" PointX="15.375" PointY="0.75" />
-        <EntityTypeShape EntityType="ChatModel.User" Width="1.5" PointX="15.375" PointY="3.75" />
         <EntityTypeShape EntityType="ChatModel.Friends" Width="1.5" PointX="11.375" PointY="15.75" />
+        <EntityTypeShape EntityType="ChatModel.User" Width="1.5" PointX="15.375" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="ChatModel.AgentPercent" Width="1.5" PointX="5.375" PointY="7.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

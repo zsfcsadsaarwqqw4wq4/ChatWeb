@@ -76,5 +76,6 @@ namespace ChatWeb.Controllers
             }
             return Json(resultdata, JsonRequestBehavior.AllowGet);
         }
+
     }
 }

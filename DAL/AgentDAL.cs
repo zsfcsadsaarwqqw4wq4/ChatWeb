@@ -26,6 +26,18 @@ namespace DAL
             }
         }
         /// <summary>
+        /// 查询当前用户的一级子代理
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns></returns>
+        public List<Agent> GetChildAgent(int userid)
+        {
+            using (ChatEntities db=new ChatEntities())
+            {
+                return db.Agent.Where(ag => ag.ParentID == userid).ToList();
+            }
+        }
+        /// <summary>
         /// 删除当前代理关系
         /// </summary>
         /// <param name="a"></param>
@@ -56,7 +68,7 @@ namespace DAL
                     int id = Convert.ToInt32(data.ParentID);
                     return id;
                 }
-                return 0;
+                return 1;
             }
         }
         /// <summary>
@@ -169,7 +181,6 @@ namespace DAL
                     int parentid = db.Agent.FirstOrDefault(o => o.UserID == agent.ParentID).UserID;
                     agentmodel.ParentAgent = db.User.FirstOrDefault(o => o.ID == parentid);
                     var childAgent = db.Agent.Where(o => o.ParentID == userid).ToList();                   
-                    List<User> ulist = new List<User>();
                     List<ChildUser> childuserlist = new List<ChildUser>();
                     if (childAgent.Count > 0)
                     {
@@ -180,6 +191,7 @@ namespace DAL
                             var childchildAgent = db.Agent.Where(o => o.ParentID == temp.UserID).ToList();
                             if (childchildAgent.Count > 0)
                             {
+                                List<User> ulist = new List<User>();
                                 foreach (var temps in childchildAgent)
                                 {
                                     User childchilduser = new User();
@@ -207,13 +219,12 @@ namespace DAL
             using (ChatEntities db=new ChatEntities())
             {
                 List<Agent> firstagent=db.Agent.Where(o => o.ParentID == userid).ToList();
-                int firstcount = firstagent.Count;
-                int data = 0;
+                int firstcount = firstagent.Count;                
                 int secondcount = 0;
                 foreach(var item in firstagent)
                 {
                     int res = db.Agent.Where(o => o.ParentID == item.UserID).ToList().Count;
-                    secondcount = data + res;
+                    secondcount = secondcount + res;
                 }
                 var datas = new
                 {
@@ -221,6 +232,24 @@ namespace DAL
                     secondcount= secondcount
                 };
                 return datas;
+            }
+        }
+        /// <summary>
+        /// 查询用户代理等级
+        /// </summary>
+        /// <param name="userid">用户id</param>
+        /// <returns></returns>
+        public int AgentLevel(int userid)
+        {
+            using (ChatEntities db=new ChatEntities())
+            {
+                var data=db.Agent.SingleOrDefault(o => o.UserID == userid);
+                if (data!=null)
+                {
+                    int res =Convert.ToInt32(data.Level.ToString());
+                    return res;
+                }
+                return 0;
             }
         }
     }

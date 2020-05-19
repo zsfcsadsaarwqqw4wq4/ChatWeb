@@ -145,7 +145,32 @@ namespace ChatWeb.Controllers
                 resultData.res = 200;               
             }
             return Json(resultData);
-        }   
+        }
+        /// <summary>
+        /// 设置是否以UserID进行搜索
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult SetSearchUserid()
+        {
+            RequestUser();
+            string msg = "";
+            if (resultData.res == 500)
+            {
+                return Json(resultData);
+            }
+            bool searchstateid = bool.Parse(GetParams("searchstateid"));
+            us.SearchStateId = searchstateid;
+            if (!ub.EditUser(us))
+            {
+                resultData.msg = "设置失败";
+                return Json(resultData);
+            }
+            else
+            {
+                resultData.res = 200;
+            }
+            return Json(resultData);
+        }
         /// <summary>
         /// 设置是否以用户名进行搜索
         /// </summary>

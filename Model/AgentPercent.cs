@@ -15,12 +15,9 @@ namespace Model
     public partial class AgentPercent
     {
         public int ID { get; set; }
-        public int UserID { get; set; }
         public int ModelID { get; set; }
-        public Nullable<int> Percent { get; set; }
-        public Nullable<int> ChildP { get; set; }
-        public Nullable<int> ChildCP { get; set; }
-        public Nullable<int> FChild { get; set; }
-        public Nullable<int> SChild { get; set; }
+        public Nullable<decimal> Percent { get; set; }
+        public Nullable<decimal> ChildP { get; set; }
+        public Nullable<decimal> ChildCP { get; set; }
     }
 }

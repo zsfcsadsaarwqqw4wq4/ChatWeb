@@ -8,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using System.Data.Entity;
 using ChatWeb.App_Start;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
@@ -63,8 +62,6 @@ namespace ChatWeb.Controllers
             InvitationBLL ib=new InvitationBLL();
             try
             {
-                //string loginids = Request["loginid"];
-                //string passwords = Request["password"];
                 using (StreamReader sr = new StreamReader(Request.InputStream))
                 {
                     string json = sr.ReadToEnd();                    
@@ -115,39 +112,43 @@ namespace ChatWeb.Controllers
                             value = true;
                         }                       
                     }
-                    var result=redis.StringGet(user.LoginID);
+                    var result=redis.StringGet(user.ID.ToString());                    
                     if (result != null)
                     {
-                        //如果该账户已经登录则通过第三方推送将消息通知给上一个用户
-                        var users = ub.GetUserName(user.LoginID);
-                        var datas = redis.StringGet(users.ID.ToString());
-                        if (datas != null)
+                        string results = result["clientid"].ToString();
+                        if (!results.Equals(clientid))
                         {
-                            string device = datas["device"].ToString();
-                            string clientids = datas["clientid"].ToString();
-                            var datass = new
+                            //如果该账户已经登录则通过第三方推送将消息通知给上一个用户
+                            var users = ub.GetUserName(user.LoginID);
+                            var datas = redis.StringGet(users.ID.ToString());
+                            if (datas != null)
                             {
-                                title = "该账号已在其他地方登录"
-                            };
-                            var PenetrateMsg = new
-                            {
-                                type = 0,
-                                data = datass
-                            };
-                            if ("2".Equals(device))
-                            {
-                                Push.IosPushMessageToSingle(JsonConvert.SerializeObject(PenetrateMsg), clientids);
+                                string device = datas["device"].ToString();
+                                string clientids = datas["clientid"].ToString();
+                                var datass = new
+                                {
+                                    title = "该账号已在其他地方登录"
+                                };
+                                var PenetrateMsg = new
+                                {
+                                    type = 0,
+                                    data = datass
+                                };
+                                if ("2".Equals(device))
+                                {
+                                    Push.IosPushMessageToSingle(JsonConvert.SerializeObject(PenetrateMsg), clientids);
+                                }
+                                else if ("1".Equals(device))
+                                {
+                                    Push.IosPushMessageToSingle(JsonConvert.SerializeObject(PenetrateMsg), clientids);
+                                }
+                                else
+                                {
+                                    resultUser.msg = "当前登录的是其他设备";
+                                    return Json(resultUser);
+                                }
                             }
-                            else if ("1".Equals(device))
-                            {
-                                Push.IosPushMessageToSingle(JsonConvert.SerializeObject(PenetrateMsg), clientids);
-                            }
-                            else
-                            {
-                                resultUser.msg = "当前登录的是其他设备";
-                                return Json(resultUser);
-                            }
-                        }
+                        }          
                     }
                     if (password.Equals(user.PassWord))
                     {
@@ -283,6 +284,7 @@ namespace ChatWeb.Controllers
                     {
                         var data= ub.GetUserName(loginid);
                         int res=CheckAgent();
+
                         var datas = new
                         {
                             device = res,
@@ -324,29 +326,53 @@ namespace ChatWeb.Controllers
             }
             return 0;
         }   
-        public string  LoginInfo()
+        public JsonResult  LoginInfo()
         {
-            string account = "admin";
-            string password = "123456";
-            using (StreamReader read = new StreamReader(Request.InputStream))
+            ResultUser resultUser = new ResultUser();
+            UserBLL ub = new UserBLL();
+            InvitationBLL ib = new InvitationBLL();
+            try
             {
-                string data = read.ReadToEnd();
-                var datas=JsonConvert.DeserializeObject<IDictionary<string,object>>(data);
-                var loginid = datas["account"];
-                var pwd = datas["password"];
-                if (account.Equals(loginid)&&password.Equals(pwd))
+                string username = Request["username"].ToString();
+                string password = Request["password"].ToString();
+                User user=new User();
+                user.LoginID = username;
+                var data=ub.GetUser(user);
+                if (data!=null)
                 {
-                    var res = new
+                    if (data.LoginID.Equals(username) && data.PassWord.Equals(MD5Helper.MD5Encrypt32(password)))
                     {
-                        headimg = Constant.files + "/Images/head/9.jpg",                       
-                    };
-                }
-                else
-                {
-                    return "登陆失败";
+                        resultUser.res = 200;
+                        resultUser.msg = "用户是登录的私密聊天";
+                        DateTime time = DateTime.Now;
+                        resultUser.data = JwtHelper.CreateToken(user,time);
+                    }
+                    else
+                    {
+                        resultUser.res = 500;
+                        resultUser.msg = "密码错误，请重新输入";
+                    }
                 }
             }
-            return "";
+            catch
+            {
+
+            }
+            return Json(resultUser);
+        }
+        public string LoginOut()
+        {
+            string username=Request["firstname"];
+            string pwd=Request["password"];
+            try
+            {
+                
+            }
+            catch
+            {
+
+            }
+            return "登录失败";
         }
     }
 }

@@ -56,5 +56,6 @@ namespace Model
         public Nullable<bool> IsEnterSendMsg { get; set; }
         public bool ChatSwitch { get; set; }
         public Nullable<System.DateTime> LastLoginAt { get; set; }
+        public Nullable<bool> SearchStateId { get; set; }
     }
 }

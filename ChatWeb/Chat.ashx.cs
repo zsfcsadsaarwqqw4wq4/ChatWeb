@@ -14,6 +14,7 @@ using Common;
 using System.Threading.Tasks;
 using BLL;
 using ChatWeb.App_Start;
+using System.Timers;
 
 namespace ChatWeb
 {
@@ -96,11 +97,47 @@ namespace ChatWeb
                 #region 离线消息处理
                 if (MESSAGE_POOL.ContainsKey(uid_main))
                 {
+                    //System.Timers.Timer timer = new System.Timers.Timer();
+                    //timer.Enabled = true;
+                    //timer.Interval = 1000; //执行间隔时间,单位为毫秒; 这里实际间隔为10分钟  
+                    //timer.Start();
+                    //timer.Elapsed += new System.Timers.ElapsedEventHandler(timeout(uid_main, webSocket, cancellationToken));
                     List<MessageInfo> msgs = MESSAGE_POOL[uid_main];
-                    foreach (MessageInfo item in msgs)
+                    int count = msgs.Count;
+                    double result = count / 15;
+                    var datas = Math.Ceiling(result);
+                    if (count < 15)
                     {
-                        await webSocket.SendAsync(item.MsgContent, WebSocketMessageType.Text, true, cancellationToken);                       
-                    }   
+                        foreach (MessageInfo item in msgs)
+                        {
+                            await webSocket.SendAsync(item.MsgContent, WebSocketMessageType.Text, true, cancellationToken);
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 1; i < datas; i++)
+                        {
+                            try
+                            {
+                                SetInterval(1000, e => { });
+                                for (int j = 15 * (i - 1); j < 15 * i; j++)
+                                {
+                                    await webSocket.SendAsync(msgs[j].MsgContent, WebSocketMessageType.Text, true, cancellationToken);
+                                }
+                            }
+                            catch
+                            {
+                                MESSAGE_POOL.Remove(uid_main);//移除离线消息
+                            }
+                        }
+                        if (count % 15 != 0)
+                        {
+                            for (int k = Convert.ToInt32((datas - 1) * 15); k < count + 1; k++)
+                            {
+                                await webSocket.SendAsync(msgs[k].MsgContent, WebSocketMessageType.Text, true, cancellationToken);
+                            }
+                        }
+                    }
                     MESSAGE_POOL.Remove(uid_main);//移除离线消息
                 }
                 #endregion
@@ -159,6 +196,15 @@ namespace ChatWeb
                 Tools.WriteLog(AppDomain.CurrentDomain.BaseDirectory + "/Log/ALL.txt", "[" + DateTime.Now.ToString("HH:mm:ss") + "] " + ex.Message + "\r\n");
             }
         }
+         public void SetInterval(double interval, Action<ElapsedEventArgs> action)
+        {
+             System.Timers.Timer timer = new System.Timers.Timer(interval);
+             timer.Elapsed += delegate(object sender, System.Timers.ElapsedEventArgs e)
+             {
+                 action(e);
+             };
+            timer.Enabled = true;
+         }
         /// <summary>
         /// 发送消息给指定用户
         /// </summary>
@@ -197,7 +243,7 @@ namespace ChatWeb
             catch(Exception ex)
             {
                 UserBLL ub = new UserBLL();
-                var users=ub.GetUserById(userid);
+                //var users=ub.GetUserById(userid);
                 string msgs = string.Empty;
                 Redis redis = new Redis();
                 var datas = redis.StringGet(uid.ToString());
@@ -208,14 +254,14 @@ namespace ChatWeb
                     token = datas["token"].ToString();
                     device = datas["device"].ToString();
                 }
-                if (Convert.ToBoolean(users.ChatSwitch))
-                {
-                    msgs = "私聊消息";
-                }
-                else
-                {
-                    msgs = DecodeBase64(msg);                    
-                }
+                //if (Convert.ToBoolean(users.ChatSwitch))
+                //{
+                //    msgs = "私聊消息";
+                //}
+                //else
+                //{
+                //    msgs = DecodeBase64(msg);                    
+                //}
                 if ("1".Equals(device))
                 {
                     if (flasedata != null)
@@ -232,6 +278,7 @@ namespace ChatWeb
                         }
                         else
                         {
+                            msgs = DecodeBase64(msg);
                             Push.PushMessageToSingle(loginid, msgs, JsonConvert.SerializeObject(res), token);
                         }
                     }
@@ -252,6 +299,7 @@ namespace ChatWeb
                         }
                         else
                         {
+                            msgs = DecodeBase64(msg);
                             Push.APNsPushToSingle(loginid, msgs, token, res);
                         }
                     }
